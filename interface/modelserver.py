@@ -19,6 +19,8 @@ from flask_cors import CORS
 from gvaemodel.vis_vae import VisVAE, get_rules, get_specs
 from gvaemodel.vis_grammar import VisGrammar
 
+from gevent import pywsgi
+
 port = 5000
 rulesfile = './gvaemodel/rules-cfg.txt'
 modelsave = './gvaemodel/vae_H256_D256_C444_333_L20_B200.hdf5'
@@ -46,7 +48,6 @@ pca = None
 
 app = Flask(__name__)
 CORS(app)
-
 
 class InvalidUsage(Exception):
     status_code = 400
@@ -161,4 +162,5 @@ if __name__ == '__main__':
 
     pca = PCA(n_components=2)
 
-    app.run(port=port, debug=False)
+    server = pywsgi.WSGIServer(('127.0.0.1', 5000), app)
+    server.serve_forever()
