@@ -119,7 +119,8 @@ export function handleEvents() {
 
     app.chartview.on('add-chart', (spec) => {
         if(app.sumview.data.chartspecs.length > 0)
-            spec._meta = {chid: app.sumview.data.chartspecs[app.sumview.data.chartspecs.length - 1]._meta.chid + 1, uid: 0}
+            spec._meta = {chid: app.sumview.data.chartspecs[app.sumview.data.chartspecs.length - 1]._meta.chid + 1,
+                uid: 0}
         else
             spec._meta = {chid:0, uid:0}
         app.sumview.data.chartspecs.push(spec)
@@ -127,7 +128,7 @@ export function handleEvents() {
         app.sumview.update(() => {app.sumview.selectedChartID = spec._meta.chid })
         
         displayAllCharts('#allchartsview', false)
-        $('#suggestionview').empty() 
+        $('#suggestionview').empty()
         
         if(logging) app.logger.push({time:Date.now(), action:'addchart', data:spec})
     })
@@ -138,7 +139,7 @@ export function handleEvents() {
 
         app.sumview.update(() => {app.sumview.selectedChartID = spec._meta.chid })
         displayAllCharts('#allchartsview', false)
-        $('#suggestionview').empty()  
+        $('#suggestionview').empty()
 
         if(logging) app.logger.push({time:Date.now(), action:'updatechart', data:spec})
     })
@@ -147,7 +148,7 @@ export function handleEvents() {
         app.sumview.data.chartspecs = app.sumview.data.chartspecs.filter((d) => { return d._meta.chid != app.sumview.selectedChartID })
         app.sumview.update()
         displayAllCharts('#allchartsview', false)
-        $('#suggestionview').empty() 
+        $('#suggestionview').empty()
 
         if(logging) app.logger.push({time:Date.now(), action:'removechart', data:spec})
     })

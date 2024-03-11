@@ -27,7 +27,7 @@ export default class SumView extends EventEmitter {
 
         this._params = {
             recradius: 0.1,
-            recnum: 5,
+            recnum: 10,
             dotr: 11,
             distw: 0.5,
             clthreshold: 0.4,
@@ -700,10 +700,13 @@ export default class SumView extends EventEmitter {
     }
 
     _recommendCharts(pt) {
+        /*
+        Todo: make the third dimension
+         */
         var coords = []
         var xr = this._params.recradius * (this.conf.size[0] - this.conf.margin * 2),
             yr = this._params.recradius * (this.conf.size[1] - this.conf.margin * 2)
-        for(var i = 0; i < this._params.recnum * 5; i++) {
+        for(var i = 0; i < this._params.recnum * 10; i++) {
             var x = this._xscale.invert(pt[0] + xr * _.random(-1, 1, true)),
                 y = this._yscale.invert(pt[1] + yr * _.random(-1, 1, true))
             coords.push([x, y])
