@@ -52,6 +52,7 @@ export default class SumView extends EventEmitter {
         this._usrclr = d3.scaleOrdinal(d3.schemeGreys[5]).domain([0, 1, 2, 3, 4])
 
         this._init()
+        this.generate_order = 0;
     }
 
     get charts() {
@@ -127,10 +128,12 @@ export default class SumView extends EventEmitter {
             .attr('height', this.conf.size[1])
             .on('click', () => {
                 if(!this.conf.norecommend && this._charts.length >= 3) {
-                    var p = d3.mouse(this._svgDrawing.node())
+                    var p = d3.mouse(this._svgDrawing.node()) // 鼠标的位置
+                    // 在过滤this._charts数组，只保留那些created属性为false的元素。
+                    // _.filter是lodash库中的一个函数，它根据提供的函数（这里是(c) => {return !c.created}）来过滤数组。
                     this._charts = _.filter(this._charts, (c) => {return !c.created})
                     this.render()
-                    this._recommendCharts(p)
+                    this._recommendCharts(p) // 将鼠标的位置作为参数传入
                 }
                 else {
                     alert('You need to create at least 3 charts.')
@@ -699,6 +702,20 @@ export default class SumView extends EventEmitter {
         return resultvlcharts
     }
 
+    /*
+    生成坐标：函数首先创建一个空的坐标数组。然后，它计算出一个矩形区域的宽度和高度，这个区域用于生成新的坐标点。
+    接着，它在这个区域内随机生成一些坐标点，并将这些点添加到坐标数组中。
+    计算距离：函数使用_estimateDistances方法来计算每个坐标点到指定点的距离。这个距离将用于后续的计算。
+    发送请求到服务器：函数使用jQuery的ajax方法向服务器发送一个POST请求。这个请求的目的是获取每个坐标点的嵌入向量。
+    请求的数据包括坐标点和距离。
+    处理服务器的响应：当服务器成功响应请求后，函数将获取到的嵌入向量保存到embeddings数组中。
+    然后，它发送另一个POST请求到服务器，请求的目的是将嵌入向量解码为规范。当服务器成功响应这个请求后，函数将获取到的规范保存到normspecs数组中。
+    生成图表：函数遍历normspecs数组，对于每个规范，它首先检查规范中是否包含变量，如果不包含变量，则跳过这个规范。
+    然后，它使用_restoreSpec方法来恢复规范，并将恢复后的规范添加到vlcharts对象中。
+    显示图表：函数使用Promise.all方法和vegaEmbed函数来显示所有的图表。
+    然后，它过滤掉那些无法显示的图表，并使用_rankCharts方法来对图表进行排序。
+    最后，它将所有的图表添加到_charts数组中，并触发一个recommendchart事件。
+    */
     _recommendCharts(pt) {
         /*
         Todo: make the third dimension
@@ -764,7 +781,7 @@ export default class SumView extends EventEmitter {
                 console.log(vl)                
                 vlcharts = _.filter(vlcharts, (v, i) => {return vl[i]})
                 vlcharts = this._rankCharts(vlcharts)
-
+                this.generate_order += 1;
                 for(var i = 0; i < vl.length; i++) {
                     if(vl[i]) {
                         var chart = {
@@ -773,9 +790,10 @@ export default class SumView extends EventEmitter {
                             embedding: embeddings[vlcharts[i].index],
                             coords: coords[vlcharts[i].index],
                             vars: vlcharts[i].vars,
-                            created: true,
+                            created: false,
                             chid: this._charts[this._charts.length - 1].chid + 1,
-                            uid: 0
+                            uid: 0,
+                            generate: this.generate_order
                         }
                         this._charts.push(chart)
                     }
