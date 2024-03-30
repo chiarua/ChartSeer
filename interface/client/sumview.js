@@ -457,7 +457,10 @@ export default class SumView extends EventEmitter {
 	}	
 
     _computeClusters() {
+        //每次调整比例时才会调用
+        console.log("computing Clusters")
         // clustering
+        //调用了一个方法来计算this._charts中的所有图表之间的距离矩阵，并将结果存储在distances变量中。
         var distances = this._computeDistanceMatrix(this._charts)
         var hclclusters = clusterfck.hcluster(
             this._charts.map((ch) => {return ch.chid}), 
@@ -469,12 +472,15 @@ export default class SumView extends EventEmitter {
             clusterfck.AVERAGE_LINKAGE, this._params.clthreshold)
 
         // flatten hierarchy
+        // 这行代码将聚类的数量存储在this._clusterNum中
         this._clusterNum = hclclusters.length
 		hclclusters.forEach((clg, idx) => {
 			var cluster = [];
+            //调用this._visitHierarchy(clg, cluster)来遍历聚类的层次结构并将结果存储在cluster中
 			this._visitHierarchy(clg, cluster);
             cluster.forEach((item) => { 
                 var chart = _.find(this._charts, (ch)=>{return ch.chid == item})
+                //它找到与之对应的图表，并将聚类的索引idx赋值给图表的clid属性。
                 chart.clid = idx
             })
 		});
@@ -828,6 +834,7 @@ export default class SumView extends EventEmitter {
                     }
                 }
             }).finally(() => {
+                this._computeClusters()// added here and nothing happens
                 this.render()
                 this.emit('recommendchart')
             })
