@@ -53,6 +53,7 @@ export default class SumView extends EventEmitter {
 
         this._init()
         this.generate_order = 0;
+        this.current_layer = 0;
     }
 
     get charts() {
@@ -126,7 +127,9 @@ export default class SumView extends EventEmitter {
             .attr('y', 0)
             .attr('width', this.conf.size[0])
             .attr('height', this.conf.size[1])
-            .on('click', () => {
+            .on('click', (d) => {
+                const event = d3.event;
+                console.log(event, this.generate_order)
                 if(!this.conf.norecommend && this._charts.length >= 3) {
                     var p = d3.mouse(this._svgDrawing.node()) // 鼠标的位置
                     // 在过滤this._charts数组，只保留那些created属性为false的元素。
@@ -148,6 +151,18 @@ export default class SumView extends EventEmitter {
             .on('mousemove', () => {
                 var p = d3.mouse(this._svgDrawing.node())
                 this._svgDrawing.select('.cursorc').attr('cx', p[0]).attr('cy', p[1])
+            })
+            .on('wheel', (d) => {
+                const event = d3.event
+                console.log(event, this.generate_order)
+                if (event.deltaY > 0 && this.current_layer < this.generate_order){
+                    this.current_layer += 1
+                }
+                else if (event.deltaY < 0 && this.current_layer > 0){
+                    this.current_layer -= 1
+                }
+                console.log(this.current_layer)
+                this.render()
             })
         this._svgDrawing.append('g')
             .attr('class', 'chartlayer')
@@ -238,11 +253,28 @@ export default class SumView extends EventEmitter {
 
             texts.exit().remove()
         }
+        /* changed here*/
         // draw charts
+        // var charts = this._svgDrawing.select('.chartlayer')
+        //     .selectAll('.chartdot')
+        //     .data(this._charts, (d) => { return d.chid })
+
+        // 过滤 this._charts 数组
+        var filteredCharts = this._charts.filter((d) => {
+            if (this.current_layer == 0) {
+                // 当 this.current_layer 等于 0 时，选择那些没有 generate 属性的图表
+                return !d.hasOwnProperty('generate');
+            } else {
+                // 否则，选择 generate 属性等于 this.current_layer 的图表
+                return d.hasOwnProperty('generate') && d.generate == this.current_layer;
+            }
+        });
+
+        // 绑定过滤后的数据
         var charts = this._svgDrawing.select('.chartlayer')
             .selectAll('.chartdot')
-            .data(this._charts, (d) => { return d.chid })
-
+            .data(filteredCharts, (d) => { return d.chid });
+        /* end change*/
         // enter
         var chartsenter = charts.enter()
             .append('g')
@@ -717,9 +749,6 @@ export default class SumView extends EventEmitter {
     最后，它将所有的图表添加到_charts数组中，并触发一个recommendchart事件。
     */
     _recommendCharts(pt) {
-        /*
-        Todo: make the third dimension
-         */
         var coords = []
         var xr = this._params.recradius * (this.conf.size[0] - this.conf.margin * 2),
             yr = this._params.recradius * (this.conf.size[1] - this.conf.margin * 2)
