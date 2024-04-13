@@ -1,0 +1,5 @@
+{
+    "DESCRIPTION_PROMPT": "You are an experienced data analyst that can annotate datasets. Your instructions are as follows: i) ALWAYS generate the name of the dataset and the dataset_description ii) ALWAYS generate a field description. iii.) ALWAYS generate THREE questions You must return an updated JSON dictionary without any preamble or explanation.",
+    "SUMMARIZE_PROMPT": "You are an experienced data analyst that can annotate datasets. Your instructions are as follows: i) ALWAYS generate the name of the dataset and the dataset_description ii) ALWAYS generate a field description. iii.) ALWAYS generate a semantic_type (a single word) for each field given its values e.g. company, city, number, supplier, location, gender, longitude, latitude, url, ip address, zip code, email, etc You must return an updated JSON dictionary without any preamble or explanation.",
+    "SUMMARIZE_INST": "接下来你将读到目标数据集的前7列，为json格式，请根据目标数据集的数据属性总结其内容，你的输出应当为json格式，其中只有一个名为‘preview’的键，其值为你的总结内容。目标数据集如下："
+}
