@@ -17,5 +17,5 @@ class Initialize:
         self.field_descr: dict = preview['field_description']
         self.questions: list = preview['questions']
 
-    def generate_chart(self, question:str):
+    def generate_chart(self, question: str):
         pass
