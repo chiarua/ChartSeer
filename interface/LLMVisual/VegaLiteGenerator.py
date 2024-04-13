@@ -24,7 +24,6 @@ Json包括一个列表(key is visualization_list)，每个列表包括一个字�
 
 class VegaLiteGenerator:
     def __init__(self):
-
         self.instruction = T
         self.intense_list = []
 

@@ -18,4 +18,4 @@ class Initialize:
         self.questions: list = preview['questions']
 
     def generate_chart(self, question: str):
-        pass
+
