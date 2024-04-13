@@ -19,7 +19,7 @@ from typing import Dict
 
 from gvaemodel.vis_vae import VisVAE, get_rules, get_specs
 from gvaemodel.vis_grammar import VisGrammar
-from LLMVisual.Initialize import VegaLiteGenerator
+from LLMVisual.VegaLiteGenerator import VegaLiteGenerator
 port = 5000
 rulesfile = './gvaemodel/rules-cfg.txt'
 modelsave = './gvaemodel/vae_H256_D256_C444_333_L20_B200.hdf5'

@@ -1,59 +1,87 @@
+import lida.datamodel
+import openai
 from openai import OpenAI
 import json
-import os
-os.environ["http_proxy"] = "http://localhost:7890"
-os.environ["https_proxy"] = "http://localhost:7890"
+from llmx import TextGenerator
+from lida import Manager, TextGenerationConfig, llm
+
+DESCRIPTION_PROMPT = f"""\n You are an experienced data analyst that can annotate datasets. Your instructions are as follows:
+i) ALWAYS generate the name of the dataset and the dataset_description
+ii) ALWAYS generate a field description.
+iii.) ALWAYS generate a semantic_type (a single word) for each field given its values e.g. company, city, number, supplier, location, gender, longitude, latitude, url, ip address, zip code, email, etc
+You must return an updated JSON dictionary without any preamble or explanation.\n"""
 
 
-class VegaLiteGenerator:
+class Initialize:
     def __init__(self):
-        t ='''用户想要对一个数据进行可视化分析，用户会输入他的意图，想要怎么样的可视化，然后用户接下来的输入有两个，第一个是json格式的vega-lite语法表示的可视化图表，这个图表只有设计属性，数据属性field用num或str表示；第二个输入是json格式的数据集。请根据数据集补充可视化图表的数据属性，生成补充完数据属性的完整的可视化图表，你必须保证field的值不为sum或者str而是有效的数据属性。你必须在保证生成的可视化图表符合用户探索意图的情况下，尽可能多地生成可视化！
-vega-lite图表生成最终结果样例：
-{
-            "encoding": {
-                "y": {
-                    "field": "Miles_per_Gallon",
-                    "type": "quantitative"
-                },
-                "x": {
-                    "field": "Year",
-                    "type": "temporal",
-                    "timeUnit": "year"
-                }
-            },
-            "mark": "point"
-        }
-你的输出必须使用json格式输出，必须包括可视化字典列表，其中每个字典必须有一个可视化解释和vega-lite可视化代码。你的输出必须有且只有一个json格式字符串！
-Json包括一个列表(key is visualization_list)，每个列表包括一个字典，每个字典有且只有两个键：“explanation”,"vega-lite_code"'''
-        self.instruction = t
-        self.intense_list = []
+        self.assistant = None
+        self.graph_list = []
 
-    def generate(self, persona):
+    def dataset_preview(self, dataset: str):
+        self.assistant = LLMAPI(dataset)
 
-        system_message = {"role": "system",
-                          "content": self.instruction}
-        client = OpenAI()
-        response = client.chat.completions.create(
-            messages=[system_message, {"role": "user", "content": persona}],
-            temperature=0.9,
-            model="gpt-3.5-turbo-0125",
-            response_format={"type": "json_object"}
-        )
-        intents = json.loads(response.choices[0].message.content)
-        filtered_intents = {key: value for key, value in intents.items() if value}
+    '''
+    Todo: 
+    def 生成初始概览（数据集）{【上传数据集触发】
+        self.llm=llm接口(数据集)
+        self.可视化列表+=self.llm.llm3生成初始可视化集合()
+        self.投影=self.vae.encoder(self.可视化列表) #调用chartseer的投影函数把初始化的可视化集合投影
+        # 使用VAE模型将生成的可视化集合进行投影
+    }
+    '''
 
-        intent_list = []
-        for intent_type, intent_messages in filtered_intents.items():
-            for message in intent_messages:
-                intent_list.append({"intent_type": intent_type, "message": message})
-        self.intense_list = intent_list
-        self.codes = [element['message']['vega-lite_code'] for element in intent_list if 'message' in element and 'vega-lite_code' in element['message']]
-        self.explanation = [element['message']['explanation'] for element in intent_list if
-                      'message' in element and 'vega-lite_code' in element['message']]
 
-        return intent_list
+class LLMAPI:
+    dataset: str
+    dataset_preview: list[str]
+    goal_list: list[lida.datamodel.Goal]
 
-    def get_codes(self):
-        return self.codes
-    def get_explanation(self):
-        return self.explanation
+    def __init__(self, dataset: str):
+        self.dataset = dataset
+        self.llm = LLM()
+        self.llm.generate_summary(dataset)
+        self.charts = []
+
+    def dataset_preview(self) -> str:
+        return self.llm.describe()
+
+    def goal(self, n=3) -> list[lida.datamodel.Goal]:
+        self.goal_list = self.llm.generate_goals(n)
+        return self.llm.goal()
+
+    def generate_charts(self) -> None:
+        self.goal_list = self.goal()
+        for i in self.goal_list:
+            self.charts.append(self.llm.generate_chart(i))
+
+
+class LLM:
+    def __init__(self, prompt=DESCRIPTION_PROMPT):
+        self.summary = None
+        self.goal_list = None
+        self.lida = Manager(text_gen=llm("openai", api_key="your-key"))
+        self.textgen_config = TextGenerationConfig(n=1, temperature=0.5, model="gpt-3.5-turbo-0301", use_cache=True)
+        self.library = "seaborn"
+
+    def generate_summary(self, file_path: str):
+        self.summary = self.lida.summarize(file_path, summary_method="llm", textgen_config=self.textgen_config)
+
+    def describe(self):
+        if not self.summary:
+            return "Summary have not been generated yet."
+        return self.summary['dataset_description']
+
+    def generate_goals(self, n: int):
+        self.goal_list = self.lida.goals(self.summary, n=n, textgen_config=self.textgen_config)
+        return self.goal_list
+
+    def goal(self):
+        if not self.goal_list:
+            return "Goals have not been generated yet."
+        return self.goal_list
+
+    def generate_chart(self, query: lida.datamodel.Goal):
+        chart = self.lida.visualize(summary=self.summary, goal=query,
+                                    textgen_config=self.textgen_config, library=self.library)
+        return chart
+
