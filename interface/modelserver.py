@@ -1,25 +1,19 @@
-import simplejson as json
-import os, sys, re
+import re
 from multiprocessing import Pool
-import nltk
-import numpy as np
-from scipy.optimize import minimize
-from scipy.spatial import procrustes
-import h5py
-
-from keras import backend as K
-import tensorflow as tf
-
-from sklearn.decomposition import PCA
-from sklearn.manifold import MDS, smacof
-
-from flask import Flask, jsonify, request
-from flask_cors import CORS
 from typing import Dict
 
-from gvaemodel.vis_vae import VisVAE, get_rules, get_specs
-from gvaemodel.vis_grammar import VisGrammar
-from LLMVisual.VegaLiteGenerator import VegaLiteGenerator
+import numpy as np
+import tensorflow as tf
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from scipy.optimize import minimize
+from scipy.spatial import procrustes
+from sklearn.decomposition import PCA
+from sklearn.manifold import MDS
+
+from LLMVisual import VegaLiteGenerator
+from gvaemodel.vis_vae import VisVAE
+
 port = 5000
 rulesfile = './gvaemodel/rules-cfg.txt'
 modelsave = './gvaemodel/vae_H256_D256_C444_333_L20_B200.hdf5'
@@ -137,7 +131,7 @@ def decode():
 
 @app.route('/decode_llm', methods=['POST'])
 def decode_llm():
-    vlg = VegaLiteGenerator()
+    vlg = VegaLiteGenerator.VegaLiteGenerator()
     str = INST
     vegas = request.get_json()[0]
     data = DATA

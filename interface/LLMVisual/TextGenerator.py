@@ -1,4 +1,3 @@
-import openai
 from openai import OpenAI
 import json
 import pandas as pd
@@ -7,19 +6,21 @@ import os
 os.environ["http_proxy"] = "http://localhost:7890"
 os.environ["https_proxy"] = "http://localhost:7890"
 
-
 class TextGenerator:
     def __init__(self):
         self.client = OpenAI()
 
-        self.prompts = self.load_prompts('model_prompts.json')
-        self.persona = self.prompts['SUMMARIZE_PROMPT']
+        self.prompts = self.load_prompts()
+        self.persona = self.prompts['DESCRIPTION_PROMPT']
         self.instruction = self.prompts['SUMMARIZE_INST']
+        self.PATH = "D:\\UPC DL\\ChartSeer\\interface\\LLMVisual\\model_prompts.json"
 
-    def load_prompts(self, path):
-        with open(path, 'r') as f:
+    def load_prompts(self, path="D:\\UPC DL\\ChartSeer\\interface\\LLMVisual\\model_prompts.json", query: str = ''):
+        with open(path, 'r', encoding='utf-8') as f:
             prompts = json.load(f)
-        return prompts
+        if not query:
+            return prompts
+        return prompts[query]
 
     def generate(self, persona: str, instruction: str):
         system_message = {"role": "system",
@@ -37,11 +38,11 @@ class TextGenerator:
 
     def dataset_preview(self, path) -> dict:
         persona = self.persona
-        instruction = self.instruction + self.read_json_and_get_columns(path)
+        instruction = self.instruction + self.read_json(path)
         dic = self.generate(persona, instruction)
         return dic
 
-    def read_json_and_get_columns(self, path):
+    def read_json(self, path):
         with open(path, 'r') as f:
             data = json.load(f)
         attributes = data.get('attributes', {})
@@ -50,6 +51,3 @@ class TextGenerator:
         columns = df.columns
         return ', '.join(columns)
 
-
-tg = TextGenerator()
-print(tg.dataset_preview("staticdata/cars.json"))
