@@ -1,5 +1,5 @@
 from . import TextGenerator
-
+import utils
 class Initialize:
     def __init__(self):
         self.persona = None
@@ -17,7 +17,7 @@ class Initialize:
         self.dataset_descr: str = preview['dataset_description']
         self.field_descr: dict = preview['field_description']
         self.questions: list = preview['questions']
-        self.persona = self.textgen.load_prompts(query="VEGALITE_PROMPT")
+        self.persona =utils.load_prompts(query="VEGALITE_PROMPT")
 
     def generate(self, question: str):
         persona = self.persona

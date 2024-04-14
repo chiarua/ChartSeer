@@ -2,6 +2,7 @@ from openai import OpenAI
 import json
 import pandas as pd
 import os
+import utils
 
 os.environ["http_proxy"] = "http://localhost:7890"
 os.environ["https_proxy"] = "http://localhost:7890"
@@ -10,17 +11,12 @@ class TextGenerator:
     def __init__(self):
         self.client = OpenAI()
 
-        self.prompts = self.load_prompts()
-        self.persona = self.prompts['DESCRIPTION_PROMPT']
-        self.instruction = self.prompts['SUMMARIZE_INST']
-        self.PATH = "D:\\UPC DL\\ChartSeer\\interface\\LLMVisual\\model_prompts.json"
-
-    def load_prompts(self, path="D:\\UPC DL\\ChartSeer\\interface\\LLMVisual\\model_prompts.json", query: str = ''):
-        with open(path, 'r', encoding='utf-8') as f:
-            prompts = json.load(f)
-        if not query:
-            return prompts
-        return prompts[query]
+        self.prompts = utils.load_prompts()
+        try:
+            self.persona = utils.load_prompts(query = 'DESCRIPTION_PROMPT')
+            self.instruction =  utils.load_prompts(query = 'SUMMARIZE_INST')
+        except KeyError as e:
+            raise ValueError(f"Key {e} does not exist in the JSON file.")
 
     def generate(self, persona: str, instruction: str):
         system_message = {"role": "system",
