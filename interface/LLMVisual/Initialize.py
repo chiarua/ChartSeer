@@ -1,4 +1,4 @@
-from . import TextGenerator
+import TextGenerator
 import utils
 class Initialize:
     def __init__(self):
@@ -27,8 +27,11 @@ class Initialize:
         message = self.textgen.generate(persona, instruction)
         return message['visualization_list']
 
-    def get_persona(self):
+    def get_persona(self)->str:
         return self.persona
 
+    def get_questions(self)->list:
+        return self.questions
 
-
+    def get_dataset_prev(self)->str:
+        return self.dataset_descr

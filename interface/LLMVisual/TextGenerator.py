@@ -7,14 +7,15 @@ import utils
 os.environ["http_proxy"] = "http://localhost:7890"
 os.environ["https_proxy"] = "http://localhost:7890"
 
+
 class TextGenerator:
     def __init__(self):
         self.client = OpenAI()
 
         self.prompts = utils.load_prompts()
         try:
-            self.persona = utils.load_prompts(query = 'DESCRIPTION_PROMPT')
-            self.instruction =  utils.load_prompts(query = 'SUMMARIZE_INST')
+            self.persona = utils.load_prompts(query='DESCRIPTION_PROMPT')
+            self.instruction = utils.load_prompts(query='SUMMARIZE_INST')
         except KeyError as e:
             raise ValueError(f"Key {e} does not exist in the JSON file.")
 
@@ -46,4 +47,3 @@ class TextGenerator:
         df = pd.DataFrame(sample)
         columns = df.columns
         return ', '.join(columns)
-
