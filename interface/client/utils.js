@@ -90,14 +90,15 @@ export function displayAllCharts(container, created) {
                     <h4> What is the relationship between Housepower and Weight_i_lbs? </h3>
                     <span> This visualization will help us understand the relationship between the power of the engine and the weight of the car.We can see if ... </span>
                     <div>
-                        <button> Evaluate </button>
-                        <button> Show Query </button>
-                        <button> Recommend </button>
+                        <button class='evaluate'> Evaluate </button>
+                        <button class='eye'> Show Query </button>
+                        <button class='light'> Recommend </button>
                     </div>
                 `))
                 $('#chartdesc' + ch.chid + ' h4').css('margin', '10px 0 5px 0')
                 $('#chartdesc' + ch.chid + ' span').css({'font-size': '14px', 'text-align': 'justify', 'display': 'block'})
                 $('#chartdesc' + ch.chid + ' div').css({'display': 'flex', 'justify-content': 'space-between', 'margin-top': '10px'})
+                $('#chartdesc' + ch.chid + ' div' + ' button').css({'font-size': '12px', 'margin': '0 2px'})
             }
 
             $('#chart' + ch.chid).append('<div class="chartcontainer"></div>')

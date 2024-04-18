@@ -12,21 +12,20 @@
     </head>
     <body>
         <div id="main_window">
-            <div id="toolbar">
+            <!-- <div id="toolbar"> -->
                 <!-- <input type="file" id="datafile" name="datafile" /> -->
-                <button id="import">Import Data & Charts</button>
-                <label id="datafile"></label>
-                <button id="export">Export Data & Charts</button>
-                <label>Variable Color Encodings: </label><span id="legend"></span>
-            </div>
+                <!-- <button id="import">Import Data & Charts</button> -->
+                <!-- <label id="datafile"></label> -->
+                <!-- <button id="export">Export Data & Charts</button> -->
+                <!-- <label>Variable Color Encodings: </label><span id="legend"></span> -->
+            <!-- </div> -->
             <div id="panel1">
-                <span class="panel-header"><label>Inspection</label></span>
+                <span class="panel-header">Inspection</span>
                 <div id="chartview">
                     <div class="chartcontainer"></div>
                     <span class="chartlabel"></span>
                     <span class="editorbuttons">
-                        <input type="Modify Chart">
-                        <button id="refine"> Refine </button>
+                        <input type="text" placeholder="Modify Chart"><button id="refine"> <img src="./assets/images/edit.png" alt="..." width="12px"> Refine </button>
                     </span>
                     <!-- <span class="editorbuttons">
                         <button id="add" style="color:#28a745">Add</button>
@@ -36,8 +35,11 @@
                 </div>
                 <div id="charteditor">
                     <div id="chartediterdesc">
-                        <h4> What is the relationship between Housepower and Weight_i_lbs? </h3>
-                        <span> This visualization will help us understand the relationship between the power of the engine and the weight of the car.We can see if ... </span>
+                        <div class="title"> What is the relationship between Housepower and Weight_i_lbs? </div>
+                        <div class="content"> This visualization will help us understand the relationship between the power of the engine and the weight of the car.We can see if ...
+                            This visualization will help us understand the relationship between the power of the engine and the weight of the car.We can see if ...
+                            This visualization will help us understand the relationship between the power of the engine and the weight of the car.We can see if ...
+                            This visualization will help us understand the relationship between the power of the engine and the weight of the car.We can see if ... </div>
                     </div>
                 </div>
                 <div id="chartcode">
@@ -65,7 +67,7 @@
             </div>
             <div id="panel2">
                 <span class="panel-header">
-                    <label>Summarization</label>
+                    Summarization
                     <!-- <span id="slider_wrapper">
                         <i>Data/Encoding Ratio</i><label id="weight">0.50</label>
                         <input type="range" min="0" max="100" value="50" id="weight_slider">
@@ -77,18 +79,17 @@
                 </span>
                 <div id="genprocess">
                     <div id="geninput">
-                        <input type="text" name="" id="">
-                        <button> generate </button>
+                        <input type="text" name="" id="" placeholder="What is the distribution of Miles_per_Gallon?"><button> <img src="./assets/images/find.png" alt="..." width="18px"> generate </button>
                     </div>
                     <div id="genbuttons">
-                        <button> Import Data </button>
-                        <button> Reset </button>
-                        <button> Cancel </button>
-                        <button> Export Charts </button>
+                        <button> <img src="./assets/images/export.png" alt="..." width="14px"> Import Data </button>
+                        <button> <img src="./assets/images/reset.png" alt="..." width="14px"> Reset </button>
+                        <button> <img src="./assets/images/back.png" alt="..." width="14px"> Cancel </button>
+                        <button> <img src="./assets/images/import.png" alt="" width="20px"> Export Charts </button>
                     </div>
                 </div>
                 <div id="sumview"></div>
-                <span id="datsetspan" class="panel-header"><label>Dateset</label></span>
+                <span id="datsetspan" class="panel-header">Dateset</span>
                 <div id="dataview">
                     <table class="compact hover cell-border nowrap"></table>
                 </div>
@@ -100,7 +101,7 @@
                 </div>
             </div> -->
             <div id="panel3">
-                <span class="panel-header"><label>Recommendation</label></span>
+                <span class="panel-header">Recommendation</span>
                 <!-- <div id="search-view">
                     <input class="search-input" id="search-input" />
                     <button class="search-button" id="search-button"> BUTTON </button>
@@ -109,7 +110,7 @@
                 <!-- <div id="suggestionview"></div> -->
             </div>
             <div id="panel4">
-                <span class="panel-header"><label>Charts</label></span>
+                <span class="panel-header">Charts</span>
                 <div id="suggestionview"></div>
             </div>
         </div>
