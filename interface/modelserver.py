@@ -114,6 +114,11 @@ def upload_file():
     return ', '.join(columns)
 
 
+@app.route('/getquiz', methods=['POST'])
+def get_question():
+    return processor.get_questions()
+
+
 @app.errorhandler(InvalidUsage)
 def handle_invalid_usage(error):
     response = jsonify(error.to_dict())
