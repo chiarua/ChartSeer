@@ -12,13 +12,13 @@
     </head>
     <body>
         <div id="main_window">
-            <!-- <div id="toolbar"> -->
-                <!-- <input type="file" id="datafile" name="datafile" /> -->
-                <!-- <button id="import">Import Data & Charts</button> -->
-                <!-- <label id="datafile"></label> -->
-                <!-- <button id="export">Export Data & Charts</button> -->
-                <!-- <label>Variable Color Encodings: </label><span id="legend"></span> -->
-            <!-- </div> -->
+            <!-- <div id="toolbar">
+                <input type="file" id="datafile" name="datafile" />
+                <button id="import">Import Data & Charts</button>
+                <label id="datafile"></label>
+                <button id="export">Export Data & Charts</button>
+                <label>Variable Color Encodings: </label><span id="legend"></span>
+            </div> -->
             <div id="panel1">
                 <span class="panel-header">Inspection</span>
                 <div id="chartview">
@@ -82,7 +82,11 @@
                         <input type="text" name="" id="" placeholder="What is the distribution of Miles_per_Gallon?"><button> <img src="./assets/images/find.png" alt="..." width="18px"> generate </button>
                     </div>
                     <div id="genbuttons">
-                        <button> <img src="./assets/images/export.png" alt="..." width="14px"> Import Data </button>
+                        <button style="position: relative;"> 
+                            <img src="./assets/images/export.png" alt="..." width="14px"> Import Data 
+                            <input type="file" id="importdata"></input>
+                        </button>
+                        <!-- <button id="importdata"> <img src="./assets/images/export.png" alt="..." width="14px"> Import Data </button> -->
                         <button> <img src="./assets/images/reset.png" alt="..." width="14px"> Reset </button>
                         <button> <img src="./assets/images/back.png" alt="..." width="14px"> Cancel </button>
                         <button> <img src="./assets/images/import.png" alt="" width="20px"> Export Charts </button>
@@ -106,13 +110,13 @@
                     <input class="search-input" id="search-input" />
                     <button class="search-button" id="search-button"> BUTTON </button>
                 </div> -->
-                <div id="allchartsview"></div>
+                <div id="suggestionview"></div>
                 <!-- <div id="suggestionview"></div> -->
             </div>
-            <div id="panel4">
+            <!-- <div id="panel4">
                 <span class="panel-header">Charts</span>
-                <div id="suggestionview"></div>
-            </div>
+                <div id="allchartsview"></div>
+            </div> -->
         </div>
         <div id="tooltip">
             <div class="chartcontainer"></div>

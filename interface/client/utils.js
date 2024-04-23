@@ -68,15 +68,15 @@ export function displayAllCharts(container, created) {
         // if(true) {
             $(container).append($('<div />', {id: 'chartall' + ch.chid}))
 
-            if(container == '#allchartsview') {
-                var vegachart = _.extend({}, ch.originalspec, 
-                    // { width: 270, height: 125, autosize: 'fit' }, 
+            if(container == '#suggestionview') {
+                var vegachart = _.extend({}, ch.originalspec,  
                     { width: 230, height: 130, autosize: 'fit' }, 
                     { data: {values: app.data.chartdata.values} },
                     { config: vegaConfig})
-                $('#chartall' + ch.chid).css({'display': 'flex', 'justify-content': 'space-between'})
+                $('#chartall' + ch.chid).css({'display': 'flex', 'justify-content': 'space-between','align-items': 'center'})
             }else {
-                var vegachart = _.extend({}, ch.originalspec,  
+                var vegachart = _.extend({}, ch.originalspec, 
+                    // { width: 270, height: 125, autosize: 'fit' }, 
                     { width: 150, height: 100, autosize: 'fit' }, 
                     { data: {values: app.data.chartdata.values} },
                     { config: vegaConfig})
@@ -84,11 +84,14 @@ export function displayAllCharts(container, created) {
             
             $('#chartall' + ch.chid).append($('<div />', {class: 'chartdiv', id: 'chart' + ch.chid}))
 
-            if(container == '#allchartsview') {
+            if(container == '#suggestionview') {
                 $('#chartall' + ch.chid).append($('<div />', {class: 'chartdiv', id: 'chartdesc' + ch.chid}))
                 $('#chartdesc' + ch.chid).append($(`
                     <h4> What is the relationship between Housepower and Weight_i_lbs? </h3>
-                    <span> This visualization will help us understand the relationship between the power of the engine and the weight of the car.We can see if ... </span>
+                `))
+                $('#chartdesc' + ch.chid).append($('<span />'))
+                $('#chartdesc' + ch.chid + ' span').text(ch.expl)
+                $('#chartdesc' + ch.chid).append($(`
                     <div>
                         <button class='evaluate'> Evaluate </button>
                         <button class='eye'> Show Query </button>
@@ -96,9 +99,10 @@ export function displayAllCharts(container, created) {
                     </div>
                 `))
                 $('#chartdesc' + ch.chid + ' h4').css('margin', '10px 0 5px 0')
-                $('#chartdesc' + ch.chid + ' span').css({'font-size': '14px', 'text-align': 'justify', 'display': 'block'})
+                // , 'text-align': 'justify'
+                $('#chartdesc' + ch.chid + ' span').css({'font-size': '14px', 'display': 'block'})
                 $('#chartdesc' + ch.chid + ' div').css({'display': 'flex', 'justify-content': 'space-between', 'margin-top': '10px'})
-                $('#chartdesc' + ch.chid + ' div' + ' button').css({'font-size': '12px', 'margin': '0 2px'})
+                $('#chartdesc' + ch.chid + ' div' + ' button').css({'font-size': '12px', 'margin': '0 2px', 'height': '25px', 'background-color': 'white', 'border-radius': '5px','border': '1px solid rgb(171, 171, 171)'})
             }
 
             $('#chart' + ch.chid).append('<div class="chartcontainer"></div>')
@@ -234,6 +238,28 @@ export function handleEvents() {
     $(window).resize(() => {
         app.sumview.svgsize = [$('#sumview').width(), $('#sumview').height()]
     })
+
+    // 导入用户数据
+    $('#importdata').on('change',function(e){
+        var reader = new FileReader();
+        reader.readAsArrayBuffer(this.files[0]);
+        reader.onload = function(e) {
+            console.log(reader.result)
+        };
+
+        $.ajax({
+            dataType:"json",
+            data:JSON.stringify({"file": reader.result}),
+            url:this.conf.backend + "/upload",
+            type:"post",
+            success:function () {
+                console.log('success');
+            },
+            error:function () {
+                console.log('error');
+            },
+        });
+    })
 }
 
 export function parseurl() {
@@ -257,6 +283,9 @@ export function updateData(data, name) {
     app.data = {}
     app.data.chartdata = {attributes: data.attributes, values: data.data}
     app.data.chartspecs = data.charts
+
+    console.log('data', data);
+    console.log('app.data', app.data);
 
     app.sumview = new SumView(d3.select('#sumview'), app.data, {
         backend: 'http://localhost:5000',

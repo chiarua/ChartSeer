@@ -718,12 +718,12 @@ export default class SumView extends EventEmitter {
                 y = this._yscale.invert(pt[1] + yr * _.random(-1, 1, true))
             coords.push([x, y])
         }
-        console.log(coords)
-        var embeddings = [], normspecs = []
+        var embeddings = [], normspecs = [], explanations=[]
 
         var edist = this._estimateDistances(coords, [this._xscale.invert(pt[0]), this._yscale.invert(pt[1])])
         var chps = this._charts.map((ch) => {return ch.embedding})
 
+        
         $.ajax({
             context: this,
             type: 'POST',
@@ -760,7 +760,7 @@ export default class SumView extends EventEmitter {
             })
         }).done((data) => {
             normspecs = data.codes
-            console.log(data.explanations)
+            explanations = data.explanations
             var vlcharts = {}
             for(var i = 0; i < normspecs.length; i++) {
                 //if(normspecs[i] in vlcharts) continue
@@ -775,9 +775,11 @@ export default class SumView extends EventEmitter {
                 vlcharts[JSON.stringify(normspecs[i])] = {
                     originalspec: normspecs[i],
                     vars: _.uniq(vars),
+                    expl: explanations[i],
                     index: i
                 }
             }
+            
 //         }).done((data) => {
 //             normspecs = data
 //             console.log(data)
@@ -797,7 +799,6 @@ export default class SumView extends EventEmitter {
 //                     index: i
 //                 }
 //             }
-            console.log(vlcharts)
             
             vlcharts = _.values(vlcharts)
             Promise.all(vlcharts.map((chsp) => {
@@ -805,7 +806,6 @@ export default class SumView extends EventEmitter {
                     { data: {values: this.data.chartdata.values} }
                 )).catch((err) => { }) // drop on vegalite error
             })).then((vl) => {
-                console.log(vl)                
                 vlcharts = _.filter(vlcharts, (v, i) => {return vl[i]})
 //                vlcharts = this._rankCharts(vlcharts)
 
@@ -816,6 +816,7 @@ export default class SumView extends EventEmitter {
                             normspec: normspecs[vlcharts[i].index],
                             embedding: embeddings[vlcharts[i].index],
                             coords: coords[vlcharts[i].index],
+                            expl: explanations[vlcharts[i].index],
                             vars: vlcharts[i].vars,
                             created: true,
                             chid: this._charts[this._charts.length - 1].chid + 1,
