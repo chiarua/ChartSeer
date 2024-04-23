@@ -1,11 +1,15 @@
 from Initialize import Initialize
 
 class FileUploadProcessor:
-    def __init__(self, file:str):
+    def __init__(self):
+        self.dataset_preview = None
+        self.questions = None
         self.charts = [] # contains 'vega-lite_code', 'explanation', 'question'
 
         self.ini = Initialize()
-        self.ini.initialize(path=file)
+        
+    def uploaded(self,  dataset:str):
+        self.ini.initialize(dataset)
         self.questions = self.ini.get_questions()
         self.dataset_preview = self.ini.get_dataset_prev()
 

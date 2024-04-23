@@ -33,9 +33,9 @@ class TextGenerator:
 
         return message
 
-    def dataset_preview(self, path) -> dict:
+    def dataset_preview(self, dataset: str) -> dict:
         persona = self.persona
-        instruction = self.instruction + self.read_json(path)
+        instruction = self.instruction + dataset
         dic = self.generate(persona, instruction)
         return dic
 

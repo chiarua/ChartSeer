@@ -1,5 +1,7 @@
 import TextGenerator
 import utils
+
+
 class Initialize:
     def __init__(self):
         self.persona = None
@@ -12,12 +14,12 @@ class Initialize:
 
     def initialize(self, path) -> None:
         preview: dict = self.textgen.dataset_preview(path)['preview']
-        print(preview)
+        # print(preview)
         self.dataset_name: str = preview['name']
         self.dataset_descr: str = preview['dataset_description']
         self.field_descr: dict = preview['field_description']
         self.questions: list = preview['questions']
-        self.persona =utils.load_prompts(query="VEGALITE_PROMPT")
+        self.persona = utils.load_prompts(query="VEGALITE_PROMPT")
 
     def generate(self, question: str):
         persona = self.persona
@@ -27,11 +29,11 @@ class Initialize:
         message = self.textgen.generate(persona, instruction)
         return message['visualization_list']
 
-    def get_persona(self)->str:
+    def get_persona(self) -> str:
         return self.persona
 
-    def get_questions(self)->list:
+    def get_questions(self) -> list:
         return self.questions
 
-    def get_dataset_prev(self)->str:
+    def get_dataset_prev(self) -> str:
         return self.dataset_descr
