@@ -250,7 +250,7 @@ export function handleEvents() {
         $.ajax({
             dataType:"json",
             data:JSON.stringify({"file": reader.result}),
-            url:this.conf.backend + "/upload",
+            url:"http://localhost:5000/upload",
             type:"post",
             success:function () {
                 console.log('success');
