@@ -1,5 +1,5 @@
-import TextGenerator
-import utils
+from interface.LLMVisual import utils
+from interface.LLMVisual import TextGen
 
 
 class Initialize:
@@ -10,7 +10,7 @@ class Initialize:
         self.dataset_descr = None
         self.dataset_name = None
         self.chart_set = dict()
-        self.textgen = TextGenerator.TextGenerator()
+        self.textgen = TextGen.TextGenerator()
 
     def initialize(self, path) -> None:
         preview: dict = self.textgen.dataset_preview(path)['preview']

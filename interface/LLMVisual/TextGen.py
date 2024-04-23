@@ -2,7 +2,7 @@ from openai import OpenAI
 import json
 import pandas as pd
 import os
-import utils
+from interface.LLMVisual import utils
 
 os.environ["http_proxy"] = "http://localhost:7890"
 os.environ["https_proxy"] = "http://localhost:7890"

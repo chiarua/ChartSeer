@@ -15,7 +15,7 @@ from sklearn.manifold import MDS
 
 from LLMVisual import VegaLiteGenerator
 from gvaemodel.vis_vae import VisVAE
-from LLMVisual import MainProcessor
+from LLMVisual.MainProcessor import FileUploadProcessor
 
 port = 5000
 rulesfile = './gvaemodel/rules-cfg.txt'
@@ -250,7 +250,7 @@ if __name__ == '__main__':
     # MAX_LEN = 20
     # LATENT = int(m.group(1))
 
-    processor = MainProcessor.FileUploadProcessor()
+    processor = FileUploadProcessor()
 
     graph = tf.get_default_graph()  # 返回当前线程的默认图形
 

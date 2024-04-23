@@ -1,4 +1,4 @@
-from Initialize import Initialize
+from interface.LLMVisual import Initial
 
 class FileUploadProcessor:
     def __init__(self):
@@ -6,7 +6,7 @@ class FileUploadProcessor:
         self.questions = None
         self.charts = [] # contains 'vega-lite_code', 'explanation', 'question'
 
-        self.ini = Initialize()
+        self.ini = Initial.Initialize()
         
     def uploaded(self,  dataset:str):
         self.ini.initialize(dataset)
