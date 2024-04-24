@@ -241,17 +241,27 @@ export function handleEvents() {
 
     // 导入用户数据
     $('#importdata').on('change',function(e){
-        var reader = new FileReader();
-        reader.readAsArrayBuffer(this.files[0]);
-        reader.onload = function(e) {
-            console.log(reader.result)
-        };
+        var file_input = document.getElementById("importdata");
+        var file = file_input.files[0];
+        // console.log(file_input.files[0]);
+
+        const formData = new FormData();
+        formData.append('file', file)
+        // console.log(formData.get('file'));
+
+        // var reader = new FileReader();
+        // reader.readAsArrayBuffer(this.files[0]);
+        // reader.onload = function(e) {
+        //     console.log(reader.result)
+        // };
 
         $.ajax({
-            dataType:"json",
-            data:JSON.stringify({"file": reader.result}),
-            url:"http://localhost:5000/upload",
+            dataType: "json",
+            data: formData,
+            url: "http://localhost:5000/upload",
             type:"post",
+            processData: false,
+			contentType: false,
             success:function () {
                 console.log('success');
             },
