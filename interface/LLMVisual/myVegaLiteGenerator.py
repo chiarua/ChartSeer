@@ -10,7 +10,7 @@ class VegaLiteGenerator:
     def __init__(self):
         self.explanation = []
         self.codes = []
-        self.initialize = Initialize.Initialize()
+        self.initialize = Initial.Initialize()
         self.initialize.initialize("D:\\UPC DL\\ChartSeer\\interface\\staticdata\\cars.json")
         self.persona = self.initialize.get_persona()
         self.visualization_list = []
