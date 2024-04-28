@@ -143,6 +143,7 @@ html, body {
   width: 510px;
   height: 510px;
   right: 0;
+  top: 525px;
   display: inline-block;
   margin: 0px;
 }
@@ -155,6 +156,68 @@ html, body {
   height: 298px;
   display: inline-block;
   margin: 0px;
+}
+
+#panel5 {
+  position: absolute;
+  width: 510px;
+  height: 510px;
+  right: 0;
+  display: inline-block;
+  margin: 0px;
+}
+
+#goals {
+  box-sizing: border-box;
+  border: #91c4c3 2px solid;
+  height: 450px;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#goalsexplain {
+  height: 385px;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+
+#goalinput {
+  height: 30px;
+  width: 100%;
+  text-align: center;
+
+  input {
+    height: 40px;
+    border-radius: 5px 0 0 5px;
+    width: 75%;
+    border: 2px solid rgb(171, 171, 171);
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align:middle;
+  }
+
+  button {
+    width: 20%;
+    height: 40px;
+    border: 2px solid rgb(171, 171, 171);
+    border-left: none ;
+    border-radius: 0 5px 5px 0;
+    background-color: #fefefe;
+    vertical-align: middle;
+  }
+
+  button:hover {
+    background-color: #91c4c36e;
+  }
+
+  button:active {
+    background-color: #91c4c397;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+  }
 }
 
 .panel-header {

@@ -111,12 +111,13 @@ def upload_file():
     df = pd.DataFrame(sample)
     columns = df.columns
     processor.uploaded(', '.join(columns))
-    return ', '.join(columns)
+    # return ', '.join(columns)
+    return jsonify(processor.get_questions())
 
 
-@app.route('/getquiz', methods=['POST'])
-def get_question():
-    return processor.get_questions()
+# @app.route('/getquiz', methods=['POST'])
+# def get_question():
+#     return processor.get_questions()
 
 
 @app.errorhandler(InvalidUsage)

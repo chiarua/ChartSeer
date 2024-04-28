@@ -243,7 +243,6 @@ export function handleEvents() {
     $('#importdata').on('change',function(e){
         var file_input = document.getElementById("importdata");
         var file = file_input.files[0];
-        // console.log(file_input.files[0]);
 
         const formData = new FormData();
         formData.append('file', file)
@@ -259,17 +258,108 @@ export function handleEvents() {
             dataType: "json",
             data: formData,
             url: "http://localhost:5000/upload",
-            type:"post",
+            type: "post",
             processData: false,
 			contentType: false,
-            success:function () {
-                console.log('success');
+            success:function (reponse) {
+                var data = reponse
+                exporationgoals(data)
             },
             error:function () {
                 console.log('error');
             },
         });
     })
+}
+
+export function exporationgoals(data) {
+    for(var i = 0; i < data.length; i++) {
+        $('#goalsexplain').append($("<div />", {id: 'goal' + i}))
+        $('#goal' + i).append(`
+            <div class="goal">
+                <span></span>
+                <div class="title"></div>
+                <div class="deleteicon">-</div>
+            </div>
+            <div class="explain">What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?'</div>
+        `)
+
+        $('#goal' + i + ' .goal' + ' span').text(i+1)
+        $('#goal' + i + ' .goal' + ' .title').text(data[i])
+
+        $('#goal' + i).css({"width": "95%", "margin": "10px auto"})
+        $('#goal' + i + ' .goal').css({"border-radius": "10px 10px 0 0", "background-color": "#a5d5d42b", "padding": "10px 10px 5px 10px", "display": "flex", "justify-content": "space-between"})
+        $('#goal' + i + ' .goal' + ' span').css({"height": "20px","display": "inline-block","border-right": "2px solid #7fc8c7","padding-right": "10px","margin-right": "10px"})
+        $('#goal' + i + ' .goal' + ' .deleteicon').css({"text-align": "center",
+            "color": "rgb(155, 155, 155)",
+            "font-size": "30px",
+            "line-height": "18px",
+            "border": "2px solid rgb(155, 155, 155)",
+            "flex": "0 0 auto",
+            "width": "20px",
+            "height": "20px",
+            "border-radius": "50%",})
+        $('#goal' + i + ' .explain').css({"border-radius": "0 0 10px 10px",
+            "background-color": "#a5d5d42b",
+            "padding":  "0 10px 10px 10px",
+            "font-size": "15px",
+            "display": "none"})
+
+        $('#goal' + i + ' .goal' + ' .title').click((e) => {
+            hideAll()
+            $(e.currentTarget.parentElement.nextElementSibling).toggle()
+        })
+
+        $('#goal' + i + ' .goal' + ' .title').dblclick((e) => {
+            var text = $(e.target).text()
+            $(e.target).html("<input type='text'>")
+            $(e.target.firstChild).val(text)
+
+            $(e.target.firstChild).css({
+                "height": "25px",
+                "font-size": "16px",
+                "width": "395px"
+            })
+
+            $(e.target.firstChild).focus().blur(function(){     
+                var newText = $(this).val()           
+                $(e.target).html(newText);
+                var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+                if(text !== newText) {
+                    // todo 修改数组里的数据
+                    data.splice(idx, 1, newText)
+                }
+            })
+
+            $(e.target.firstChild).bind('keypress', function (event) {
+                if (event.keyCode == "13") {
+                    var newText = $(this).val()           
+                    $(e.target).html(newText);
+                    var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+                    if(text !== newText) {
+                        // todo 修改数组里的数据
+                        data.splice(idx, 1, newText)
+                    }
+                }
+            })
+        })
+
+        $('#goal' + i + ' .goal' + ' .deleteicon').click((e) => {
+            var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+            data.splice(idx, 1)
+            $(e.target.parentElement.parentElement).remove()
+        })
+    }
+
+    function hideAll() {
+        for(var i = 0; i < data.length; i++) {
+            $('#goal' + i + ' .explain').hide()
+        }
+    }
+
+    function editinput(e, num) {
+        
+    }
 }
 
 export function parseurl() {
