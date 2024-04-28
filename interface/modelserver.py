@@ -111,13 +111,18 @@ def upload_file():
     df = pd.DataFrame(sample)
     columns = df.columns
     processor.uploaded(', '.join(columns))
-    # return ', '.join(columns)
     return jsonify(processor.get_questions())
 
 
-# @app.route('/getquiz', methods=['POST'])
-# def get_question():
-#     return processor.get_questions()
+@app.route('/updatequiz', methods=['POST'])
+def update_question():
+    q = request.get_json()
+    str_list = []
+    if isinstance(q, list):
+        # 将列表中的所有元素转换为字符串
+        str_list = [str(item) for item in q]
+    processor.update_questions(str_list)
+    processor.generate_charts_ini()
 
 
 @app.errorhandler(InvalidUsage)

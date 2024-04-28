@@ -1,3 +1,5 @@
+from typing import List
+
 from .Initial import Initialize
 
 class FileUploadProcessor:
@@ -19,9 +21,8 @@ class FileUploadProcessor:
     def get_preview(self)->str:
         return self.dataset_preview
 
-    def select_questions(self):
-        # todo: how to do
-        pass
+    def update_questions(self, q: List[str]):
+        self.questions = q
 
     def generate_charts_ini(self)->None:
         for q in self.questions:
