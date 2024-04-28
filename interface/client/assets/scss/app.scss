@@ -67,7 +67,8 @@ html, body {
       display: inline-block;
       box-sizing: border-box;
       font-size: 16px;
-      vertical-align:middle;
+      vertical-align: middle;
+      padding-left: 10px;
     }
 
     button {
@@ -195,6 +196,7 @@ html, body {
     display: inline-block;
     box-sizing: border-box;
     vertical-align:middle;
+    padding-left: 10px;
   }
 
   button {
@@ -359,7 +361,8 @@ html, body {
     border: 2px solid rgb(171, 171, 171);
     display: inline-block;
     box-sizing: border-box;
-    vertical-align:middle;
+    vertical-align: middle;
+    padding-left: 10px;
   }
 
   button {
