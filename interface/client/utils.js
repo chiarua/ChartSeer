@@ -282,11 +282,14 @@ export function exporationgoals(data) {
 
     $('#addgoal').click((e) => {
         var text = getText()
-        data.push(text)
-        console.log(data)
-        clearText()
-
-        appendGoals(data)
+        if(text == '') {
+            alert("该内容不能为空！")
+        }else {
+            data.push(text)
+            console.log(data)
+            clearText()
+            appendGoals(data)
+        }
     })
 
     $('#submit').click((e) => {
