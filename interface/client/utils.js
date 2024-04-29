@@ -270,95 +270,233 @@ export function handleEvents() {
             },
         });
     })
+
 }
 
 export function exporationgoals(data) {
-    for(var i = 0; i < data.length; i++) {
-        $('#goalsexplain').append($("<div />", {id: 'goal' + i}))
-        $('#goal' + i).append(`
-            <div class="goal">
-                <span></span>
-                <div class="title"></div>
-                <div class="deleteicon">-</div>
-            </div>
-            <div class="explain">What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?'</div>
-        `)
+    appendGoals(data)
 
-        $('#goal' + i + ' .goal' + ' span').text(i+1)
-        $('#goal' + i + ' .goal' + ' .title').text(data[i])
+    // $('#addgoal').click((e) => {
+    //     addGoal()
+    // })
 
-        $('#goal' + i).css({"width": "95%", "margin": "10px auto"})
-        $('#goal' + i + ' .goal').css({"border-radius": "10px 10px 0 0", "background-color": "#a5d5d42b", "padding": "10px 10px 5px 10px", "display": "flex", "justify-content": "space-between"})
-        $('#goal' + i + ' .goal' + ' span').css({"height": "20px","display": "inline-block","border-right": "2px solid #7fc8c7","padding-right": "10px","margin-right": "10px"})
-        $('#goal' + i + ' .goal' + ' .deleteicon').css({"text-align": "center",
-            "color": "rgb(155, 155, 155)",
-            "font-size": "30px",
-            "line-height": "18px",
-            "border": "2px solid rgb(155, 155, 155)",
-            "flex": "0 0 auto",
-            "width": "20px",
-            "height": "20px",
-            "border-radius": "50%",})
-        $('#goal' + i + ' .explain').css({"border-radius": "0 0 10px 10px",
-            "background-color": "#a5d5d42b",
-            "padding":  "0 10px 10px 10px",
-            "font-size": "15px",
-            "display": "none"})
+    $('#addgoal').click((e) => {
+        var text = getText()
+        data.push(text)
+        console.log(data)
+        clearText()
 
-        $('#goal' + i + ' .goal' + ' .title').click((e) => {
-            hideAll()
-            $(e.currentTarget.parentElement.nextElementSibling).toggle()
+        appendGoals(data)
+    })
+
+    $('#submit').click((e) => {
+        console.log(data);
+
+        return $.ajax({
+            context: this,
+            type: 'POST',
+            crossDomain: true,
+            url: "http://localhost:5000//updatequiz",
+            data: JSON.stringify(data),
+            contentType: 'application/json'
+        }).then((res) => {
+            console.log(res);
         })
+    })
 
-        $('#goal' + i + ' .goal' + ' .title').dblclick((e) => {
-            var text = $(e.target).text()
-            $(e.target).html("<input type='text'>")
-            $(e.target.firstChild).val(text)
-
-            $(e.target.firstChild).css({
-                "height": "25px",
-                "font-size": "16px",
-                "width": "395px"
-            })
-
-            $(e.target.firstChild).focus().blur(function(){     
-                var newText = $(this).val()           
-                $(e.target).html(newText);
+    function appendGoals(data) {
+        $('#goalsexplain').children().remove()
+        for(var i = 0; i < data.length; i++) {
+            $('#goalsexplain').append($("<div />", {id: 'goal' + i}))
+            $('#goal' + i).append(`
+                <div class="goal">
+                    <span></span>
+                    <div class="title"></div>
+                    <div class="deleteicon">-</div>
+                </div>
+                <div class="explain">What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?'</div>
+            `)
+    
+            $('#goal' + i + ' .goal' + ' span').text(i+1)
+            $('#goal' + i + ' .goal' + ' .title').text(data[i])
+    
+            $('#goal' + i).css({"width": "95%", "margin": "10px auto"})
+            $('#goal' + i + ' .goal').css({"border-radius": "10px 10px 0 0", "background-color": "#a5d5d42b", "padding": "10px 10px 5px 10px", "display": "flex", "justify-content": "space-between"})
+            $('#goal' + i + ' .goal' + ' span').css({"height": "20px","display": "inline-block","border-right": "2px solid #7fc8c7","padding-right": "10px","margin-right": "10px"})
+            $('#goal' + i + ' .goal' + ' .deleteicon').css({"text-align": "center",
+                "color": "rgb(155, 155, 155)",
+                "font-size": "30px",
+                "line-height": "18px",
+                "border": "2px solid rgb(155, 155, 155)",
+                "flex": "0 0 auto",
+                "width": "20px",
+                "height": "20px",
+                "border-radius": "50%",})
+            $('#goal' + i + ' .explain').css({"border-radius": "0 0 10px 10px",
+                "background-color": "#a5d5d42b",
+                "padding":  "0 10px 10px 10px",
+                "font-size": "15px",
+                "display": "none"})
+    
+            $('#goal' + i + ' .goal' + ' .title').click((e) => {
                 var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
-                if(text !== newText) {
-                    // todo 修改数组里的数据
-                    data.splice(idx, 1, newText)
-                }
+                hideAll(idx)
+                $(e.currentTarget.parentElement.nextElementSibling).toggle()
             })
-
-            $(e.target.firstChild).bind('keypress', function (event) {
-                if (event.keyCode == "13") {
+    
+            $('#goal' + i + ' .goal' + ' .title').dblclick((e) => {
+                var text = $(e.target).text()
+                $(e.target).html("<input type='text'>")
+                $(e.target.firstChild).val(text)
+    
+                $(e.target.firstChild).css({
+                    "height": "25px",
+                    "font-size": "16px",
+                    "width": "395px"
+                })
+    
+                $(e.target.firstChild).focus().blur(function(){     
                     var newText = $(this).val()           
                     $(e.target).html(newText);
                     var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
                     if(text !== newText) {
                         // todo 修改数组里的数据
                         data.splice(idx, 1, newText)
+                        console.log(data);
                     }
-                }
+                })
+    
+                $(e.target.firstChild).bind('keypress', function (event) {
+                    if (event.keyCode == "13") {
+                        var newText = $(this).val()           
+                        $(e.target).html(newText);
+                        var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+                        if(text !== newText) {
+                            // todo 修改数组里的数据
+                            data.splice(idx, 1, newText)
+                            console.log(data);
+                        }
+                    }
+                })
             })
-        })
-
-        $('#goal' + i + ' .goal' + ' .deleteicon').click((e) => {
-            var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
-            data.splice(idx, 1)
-            $(e.target.parentElement.parentElement).remove()
-        })
-    }
-
-    function hideAll() {
-        for(var i = 0; i < data.length; i++) {
-            $('#goal' + i + ' .explain').hide()
+    
+            $('#goal' + i + ' .goal' + ' .deleteicon').click((e) => {
+                var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+                data.splice(idx, 1)
+                console.log(data);
+                appendGoals(data)
+                // $(e.target.parentElement.parentElement).remove()
+            })
         }
     }
 
-    function editinput(e, num) {
-        
+    function getText() {
+        return $("#goalTitle").val()
+    }
+
+    function clearText() {
+        $("#goalTitle").prop("value", "")
+    }
+
+    // function addGoal() {
+    //     if($("#goalsexplain").children().length == 0) {
+    //         idx = 0
+    //     }else {
+    //         var idx = parseInt($("#goalsexplain").children().eq(-1).attr("id").slice(-1))
+    //     }
+    //     var text = $("#goalTitle").val()
+    //     var newIdx = idx + 1
+
+    //     data.push(text)
+    //     console.log(data);
+
+    //     $('#goalsexplain').append($("<div />", {id: 'goal' + newIdx}))
+    //     $('#goal' + newIdx).append(`
+    //         <div class="goal">
+    //             <span></span>
+    //             <div class="title"></div>
+    //             <div class="deleteicon">-</div>
+    //         </div>
+    //     `)
+    //     // <div class="explain">What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?'</div>
+
+
+    //     $('#goal' + newIdx + ' .goal' + ' span').text(newIdx + 1)
+    //     $('#goal' + newIdx + ' .goal' + ' .title').text(text)
+
+    //     $('#goal' + newIdx).css({"width": "95%", "margin": "10px auto"})
+    //     $('#goal' + newIdx + ' .goal').css({"border-radius": "10px 10px 0 0", "background-color": "#a5d5d42b", "padding": "10px 10px 5px 10px", "display": "flex", "justify-content": "space-between"})
+    //     $('#goal' + newIdx + ' .goal' + ' span').css({"height": "20px","display": "inline-block","border-right": "2px solid #7fc8c7","padding-right": "10px","margin-right": "10px"})
+    //     $('#goal' + newIdx + ' .goal' + ' .deleteicon').css({"text-align": "center",
+    //         "color": "rgb(155, 155, 155)",
+    //         "font-size": "30px",
+    //         "line-height": "18px",
+    //         "border": "2px solid rgb(155, 155, 155)",
+    //         "flex": "0 0 auto",
+    //         "width": "20px",
+    //         "height": "20px",
+    //         "border-radius": "50%",})
+    //     // $('#goal' + i + ' .explain').css({"border-radius": "0 0 10px 10px",
+    //     //     "background-color": "#a5d5d42b",
+    //     //     "padding":  "0 10px 10px 10px",
+    //     //     "font-size": "15px",
+    //     //     "display": "none"})
+
+    //     $('#goal' + newIdx + ' .goal' + ' .title').click((e) => {
+    //         var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+    //         hideAll(idx)
+    //         $(e.currentTarget.parentElement.nextElementSibling).toggle()
+    //     })
+
+    //     $('#goal' + newIdx + ' .goal' + ' .title').dblclick((e) => {
+    //         var text = $(e.target).text()
+    //         $(e.target).html("<input type='text'>")
+    //         $(e.target.firstChild).val(text)
+
+    //         $(e.target.firstChild).css({
+    //             "height": "25px",
+    //             "font-size": "16px",
+    //             "width": "395px"
+    //         })
+
+    //         $(e.target.firstChild).focus().blur(function(){     
+    //             var newText = $(this).val()           
+    //             $(e.target).html(newText);
+    //             var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+    //             if(text !== newText) {
+    //                 // todo 修改数组里的数据
+    //                 data.splice(idx, 1, newText)
+    //                 console.log(data);
+    //             }
+    //         })
+
+    //         $(e.target.firstChild).bind('keypress', function (event) {
+    //             if (event.keyCode == "13") {
+    //                 var newText = $(this).val()           
+    //                 $(e.target).html(newText);
+    //                 var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+    //                 if(text !== newText) {
+    //                     // todo 修改数组里的数据
+    //                     data.splice(idx, 1, newText)
+    //                     console.log(data);
+    //                 }
+    //             }
+    //         })
+    //     })
+
+    //     $('#goal' + newIdx + ' .goal' + ' .deleteicon').click((e) => {
+    //         var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
+    //         data.splice(idx, 1)
+    //         console.log(data);
+    //         $(e.target.parentElement.parentElement).remove()
+    //     })
+    // }
+
+    function hideAll(idx) {
+        for(var i = 0; i < data.length; i++) {
+            if(i == idx) continue
+            $('#goal' + i + ' .explain').hide()
+        }
     }
 }
 
