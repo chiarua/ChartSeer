@@ -123,6 +123,16 @@ def update_question():
         str_list = [str(item) for item in q]
     processor.update_questions(str_list)
     processor.generate_charts_ini()
+    return "Question updated successfully", 200
+
+
+@app.route('/addquiz', methods=['POST'])
+def add_question():
+    q = request.get_json()
+    if isinstance(q, str):
+        q = str(q)
+    processor.add_question(q)
+    return "Question added", 200
 
 
 @app.errorhandler(InvalidUsage)

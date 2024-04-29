@@ -24,6 +24,9 @@ class FileUploadProcessor:
     def update_questions(self, q: List[str]):
         self.questions = q
 
+    def add_question(self, q:str):
+        self.questions.append(q)
+
     def generate_charts_ini(self)->None:
         for q in self.questions:
             self.generate_charts_user(q)
