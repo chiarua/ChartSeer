@@ -123,7 +123,9 @@ def update_question():
         str_list = [str(item) for item in q]
     processor.update_questions(str_list)
     processor.generate_charts_ini()
-    return "Question updated successfully", 200
+    charts = processor.charts
+    print(charts)
+    return jsonify(charts), 200
 
 
 @app.route('/addquiz', methods=['POST'])
