@@ -10,7 +10,7 @@ os.environ["https_proxy"] = "http://localhost:7890"
 
 class TextGenerator:
     def __init__(self):
-        self.client = OpenAI()
+        self.client = OpenAI(base_url="https://api.gpt.ge")
 
         self.prompts = utils.load_prompts()
         try:

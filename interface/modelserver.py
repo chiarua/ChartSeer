@@ -124,7 +124,6 @@ def update_question():
     processor.update_questions(str_list)
     processor.generate_charts_ini()
     charts = processor.charts
-    print(charts)
     return jsonify(charts), 200
 
 
