@@ -110,20 +110,32 @@ def upload_file():
     sample = data.get('data', [])[:7]
     df = pd.DataFrame(sample)
     columns = df.columns
-    processor.uploaded(', '.join(columns))
-    return jsonify(processor.get_questions())
+    # processor.uploaded(', '.join(columns))
+    # return jsonify(processor.get_questions())
+    tmp = ['What is the relationship between the Average Faculty Salary and the Mean Earnings of graduates from these '
+           'institutions?', 'How does the Median Family Income of students correlate with the Admission Rate of the '
+                            'institution?', 'Are institutions with higher Average Costs more likely to have a higher '
+                                            'Median Debt among their students?']
+    return jsonify(tmp)
 
 
 @app.route('/updatequiz', methods=['POST'])
 def update_question():
     q = request.get_json()
+    print(q)
     str_list = []
     if isinstance(q, list):
         # 将列表中的所有元素转换为字符串
         str_list = [str(item) for item in q]
-    processor.update_questions(str_list)
-    processor.generate_charts_ini()
-    charts = processor.charts
+    # processor.update_questions(str_list)
+    # processor.generate_charts_ini()
+    # charts = processor.charts
+    # json_data = json.dumps(charts)
+    # # 将JSON数据写入文件
+    # with open("tmpinput.json", "w") as file:
+    #     file.write(json_data)
+    with open('tmpinput.json', 'r') as file:
+        charts = json.load(file)
     return jsonify(charts), 200
 
 

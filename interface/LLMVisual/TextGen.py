@@ -7,12 +7,12 @@ from . import utils
 
 os.environ["http_proxy"] = "http://localhost:7890"
 os.environ["https_proxy"] = "http://localhost:7890"
-openai.api_key = "sk-YONMgBDUxFGw03z66884B3EdA8D747C6AdE5Ed18D490E3Fe"
-openai.base_url = "https://api.gpt.ge/v1/"
 
 class TextGenerator:
     def __init__(self):
         self.client = OpenAI()
+        self.client.api_key = "sk-YONMgBDUxFGw03z66884B3EdA8D747C6AdE5Ed18D490E3Fe"
+        self.client.base_url = "https://api.gpt.ge/v1/"
 
         self.prompts = utils.load_prompts()
         try:
@@ -25,7 +25,7 @@ class TextGenerator:
         system_message = {"role": "system",
                           "content": instruction}
         client = self.client
-        response = openai.chat.completions.create(
+        response = client.chat.completions.create(
             messages=[system_message, {"role": "user", "content": persona}],
             temperature=0.9,
             model="gpt-4-turbo-preview",
