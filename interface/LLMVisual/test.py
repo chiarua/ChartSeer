@@ -1,6 +1,7 @@
 import MainProcessor
 from MainProcessor import FileUploadProcessor
+import unittest
+import utils
+import json
 
-f = FileUploadProcessor("D:\\UPC DL\\ChartSeer\\interface\\LLMVisual\\staticdata\\cars.json")
-f.generate_charts()
-
+spec = utils.parse_specs()

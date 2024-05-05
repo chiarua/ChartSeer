@@ -1,7 +1,7 @@
 import json
 import re
 from multiprocessing import Pool
-from typing import Dict
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -16,6 +16,7 @@ from sklearn.manifold import MDS
 from LLMVisual import VegaLiteGenerator
 from gvaemodel.vis_vae import VisVAE
 from LLMVisual.MainProcessor import FileUploadProcessor
+from LLMVisual import utils
 
 port = 5000
 rulesfile = './gvaemodel/rules-cfg.txt'
@@ -121,6 +122,9 @@ def upload_file():
 
 @app.route('/updatequiz', methods=['POST'])
 def update_question():
+    """
+    :return: json{"chart": list, "charts_for_encode": list}
+    """
     q = request.get_json()
     print(q)
     str_list = []
@@ -135,8 +139,14 @@ def update_question():
     # with open("tmpinput.json", "w") as file:
     #     file.write(json_data)
     with open('tmpinput.json', 'r') as file:
-        charts = json.load(file)
-    return jsonify(charts), 200
+        charts: List[dict] = json.load(file)
+    fixed_charts = []
+    the_spec = utils.parse_specs()
+    for chart in charts:
+        chart['vega-lite_code'] = utils.fix_vegalite_spec(chart, the_spec)
+        fixed_charts.append(chart)
+    dic = {"charts": charts, "charts_for_encode": fixed_charts}
+    return jsonify(dic), 200
 
 
 @app.route('/addquiz', methods=['POST'])
