@@ -68,6 +68,10 @@ def fix_vegalite_spec_recur(json_spec, spec_dict):
     return new_json_spec
 
 
+def check_root(spec):
+    return set(spec.keys()) == {"encoding", "mark"}
+
+
 print(parse_specs())
 specs = parse_specs()
 jstr = '''

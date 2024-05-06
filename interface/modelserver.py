@@ -146,6 +146,14 @@ def update_question():
     for chart in charts:
         chart['vega-lite_code'] = utils.fix_vegalite_spec_recur(chart['vega-lite_code'], the_spec)
         fixed_charts.append(chart)
+    del_lst = []
+    for i, chart in enumerate(fixed_charts):
+        if utils.check_root(chart['vega-lite_code']):
+            continue
+        del_lst.append(i)
+    del_lst.reverse()
+    for i in del_lst:
+        charts.pop(i)
     dic = {"charts": charts, "charts_for_encode": fixed_charts}
     return jsonify(dic), 200
 
