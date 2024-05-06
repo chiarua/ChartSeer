@@ -143,7 +143,7 @@ def update_question():
     fixed_charts = []
     the_spec = utils.parse_specs()
     for chart in charts:
-        chart['vega-lite_code'] = utils.fix_vegalite_spec(chart, the_spec)
+        chart['vega-lite_code'] = utils.fix_vegalite_spec(chart['vega-lite_code'], the_spec)
         fixed_charts.append(chart)
     dic = {"charts": charts, "charts_for_encode": fixed_charts}
     return jsonify(dic), 200
