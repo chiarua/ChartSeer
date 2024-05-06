@@ -113,10 +113,9 @@ def upload_file():
     columns = df.columns
     processor.uploaded(', '.join(columns))
     return jsonify(processor.get_questions())
-    # tmp = ['What is the relationship between the Average Faculty Salary and the Mean Earnings of graduates from these '
-    #        'institutions?', 'How does the Median Family Income of students correlate with the Admission Rate of the '
-    #                         'institution?', 'Are institutions with higher Average Costs more likely to have a higher '
-    #                                         'Median Debt among their students?']
+    # tmp = ['Which cars have the best fuel efficiency measured in Miles_per_Gallon?',
+    #        'How does weight influence the acceleration of the automobiles?']
+    #
     # return jsonify(tmp)
 
 
@@ -134,6 +133,7 @@ def update_question():
     processor.update_questions(str_list)
     processor.generate_charts_ini()
     charts = processor.charts
+    print(charts)
     # sudo-output
     # json_data = json.dumps(charts)
     # # 将JSON数据写入文件
@@ -141,21 +141,8 @@ def update_question():
     #     file.write(json_data)
     # with open('tmpinput.json', 'r') as file:
     #     charts: List[dict] = json.load(file)
-    fixed_charts = []
-    the_spec = utils.parse_specs()
-    for chart in charts:
-        chart['vega-lite_code'] = utils.fix_vegalite_spec_recur(chart['vega-lite_code'], the_spec)
-        fixed_charts.append(chart)
-    del_lst = []
-    for i, chart in enumerate(fixed_charts):
-        if utils.check_root(chart['vega-lite_code']):
-            continue
-        del_lst.append(i)
-    del_lst.reverse()
-    for i in del_lst:
-        charts.pop(i)
-        fixed_charts.pop(i)
-    dic = {"charts": charts, "charts_for_encode": fixed_charts}
+    dic = utils.fix_charts(charts)
+    print(dic)
     return jsonify(dic), 200
 
 

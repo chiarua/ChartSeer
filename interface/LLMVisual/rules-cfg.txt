@@ -13,6 +13,9 @@ encoding -> detail "+" size "+" x "+" y
 encoding -> detail "+" shape "+" x "+" y
 encoding -> shape "+" size "+" x "+" y
 encoding -> x "+" y
+timeUnit -> "day"
+timeUnit -> "month"
+timeUnit -> "year"
 color -> aggregate "+" field "+" type
 color -> bin "+" field "+" type
 color -> field "+" timeUnit "+" type
