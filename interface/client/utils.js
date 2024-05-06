@@ -295,248 +295,245 @@ export function exporationgoals(data) {
     })
 
     $('#submit').click((e) => {
-        console.log(data);
-
+        // console.log(data);
 
         // mask
-        var res = [
-            {
-                "explanation": "This scatter plot shows the relationship between the number of cylinders and the fuel efficiency of the vehicles. Each point represents a vehicle, with the x-axis indicating the number of cylinders and the y-axis showing the miles per gallon. This visualization helps to identify if there is a correlation between these two variables.",
-                "question": "How does the number of cylinders correlate with the fuel efficiency of the vehicles in the dataset?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "y": {
-                            "field": "Miles_per_Gallon",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Cylinders",
-                            "type": "ordinal"
-                        }
-                    },
-                    "mark": "point"
-                }
-            },
-            {
-                "explanation": "This bar chart compares the average fuel efficiency of vehicles grouped by the number of cylinders. It provides an aggregated view to see how the cylinders might typically affect the mileage.",
-                "question": "How does the number of cylinders correlate with the fuel efficiency of the vehicles in the dataset?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "y": {
-                            // "aggregate": "average",
-                            "field": "Miles_per_Gallon",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Cylinders",
-                            "type": "ordinal"
-                        }
-                    },
-                    "mark": "bar"
-                }
-            },
-            {
-                "explanation": "This line chart demonstrates the trend of average fuel efficiency across different cylinder categories over the years. It helps to determine whether the relationship between the number of cylinders and fuel efficiency has changed over time.",
-                "question": "How does the number of cylinders correlate with the fuel efficiency of the vehicles in the dataset?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "color": {
-                            "field": "Cylinders",
-                            "type": "nominal"
-                        },
-                        "y": {
-                            // "aggregate": "average",
-                            "field": "Miles_per_Gallon",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Year",
-                            "timeUnit": "year",
-                            "type": "temporal"
-                        }
-                    },
-                    "mark": "line"
-                }
-            },
-            {
-                "explanation": "This visualization represents the trend in horsepower over the years, with horsepower on the y-axis and year on the x-axis, showing how horsepower has changed over time.",
-                "question": "What is the trend in horsepower and engine displacement over the years?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "y": {
-                            "field": "Horsepower",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Year",
-                            "timeUnit": "year",
-                            "type": "temporal"
-                        }
-                    },
-                    "mark": "line"
-                }
-            },
-            {
-                "explanation": "This visualization illustrates the trend in engine displacement over the years, with engine displacement on the y-axis and year on the x-axis, indicating how engine sizes have shifted over time.",
-                "question": "What is the trend in horsepower and engine displacement over the years?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "y": {
-                            "field": "Displacement",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Year",
-                            "timeUnit": "year",
-                            "type": "temporal"
-                        }
-                    },
-                    "mark": "line"
-                }
-            },
-            {
-                "explanation": "This visualization depicts a scatter plot comparing horsepower to engine displacement, with each point representing a vehicle, to show the relationship between the two variables.",
-                "question": "What is the trend in horsepower and engine displacement over the years?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "color": {
-                            "field": "Year",
-                            "timeUnit": "year",
-                            "type": "temporal"
-                        },
-                        "y": {
-                            "field": "Horsepower",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Displacement",
-                            "type": "quantitative"
-                        }
-                    },
-                    "mark": "point"
-                }
-            },
-            {
-                "explanation": "This visualization uses a line chart to show both horsepower and engine displacement trends over the years on a dual-axis, enabling us to observe the changes in both metrics simultaneously.",
-                "question": "What is the trend in horsepower and engine displacement over the years?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "color": {
-                            "field": "Origin",
-                            "type": "nominal"
-                        },
-                        "y": {
-                            "field": "Horsepower",
-                            "type": "quantitative"
-                        },
-                        // "y2": {
-                        //     "field": "Displacement",
-                        //     "type": "quantitative"
-                        // },
-                        "x": {
-                            "field": "Year",
-                            "timeUnit": "year",
-                            "type": "temporal"
-                        }
-                    },
-                    "mark": "line"
-                }
-            },
-            {
-                "explanation": "This visualization shows a bar chart comparing the average weight of vehicles from different origins. It allows us to see if there is a significant difference in the average weights for vehicles produced in different regions.",
-                "question": "Are there significant differences in average weight and acceleration between vehicles from different origins?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "y": {
-                            // "aggregate": "average",
-                            "field": "Weight_in_lbs",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Origin",
-                            "type": "nominal"
-                        }
-                    },
-                    "mark": "bar"
-                }
-            },
-            {
-                "explanation": "This visualization presents the average acceleration of vehicles by origin, using a bar chart. It visually represents if there are discrepancies in acceleration capabilities across different vehicle origins.",
-                "question": "Are there significant differences in average weight and acceleration between vehicles from different origins?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "y": {
-                            // "aggregate": "average",
-                            "field": "Acceleration",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Origin",
-                            "type": "nominal"
-                        }
-                    },
-                    "mark": "bar"
-                }
-            },
-            {
-                "explanation": "This visualization displays a scatter plot correlating the weight and acceleration of the vehicles, colored by their origin. This helps to explore if there is any relationship between the weight and acceleration across different origins.",
-                "question": "Are there significant differences in average weight and acceleration between vehicles from different origins?",
-                "vega-lite_code": {
-                    "encoding": {
-                        "color": {
-                            "field": "Origin",
-                            "type": "nominal"
-                        },
-                        "y": {
-                            "field": "Acceleration",
-                            "type": "quantitative"
-                        },
-                        "x": {
-                            "field": "Weight_in_lbs",
-                            "type": "quantitative"
-                        }
-                    },
-                    "mark": "point"
-                }
-            }
-        ]
-
-        var charts = []
-        for(var i = 0; i < res.length; i++) {
-            res[i]["vega-lite_code"]._meta = {
-                uid: 0,
-                chid: i+1
-            },
-            charts.push(res[i]["vega-lite_code"])
-        }
-        initData.charts = charts
-
-        updateData(initData, "file")
-
-        // $.ajax({
-        //     context: this,
-        //     type: 'POST',
-        //     crossDomain: true,
-        //     url: "http://localhost:5000//updatequiz",
-        //     data: JSON.stringify(data),
-        //     contentType: 'application/json'
-        // }).then((res) => {
-        //     console.log(res);
-
-        //     var charts = []
-        //     for(var i = 0; i < res.length; i++) {
-        //         res[i]["vega-lite_code"]._meta = {
-        //             uid: 0,
-        //             chid: i+1
-        //         },
-        //         charts.push(res[i]["vega-lite_code"])
+        // var res = [
+        //     {
+        //         "explanation": "This scatter plot shows the relationship between the number of cylinders and the fuel efficiency of the vehicles. Each point represents a vehicle, with the x-axis indicating the number of cylinders and the y-axis showing the miles per gallon. This visualization helps to identify if there is a correlation between these two variables.",
+        //         "question": "How does the number of cylinders correlate with the fuel efficiency of the vehicles in the dataset?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "y": {
+        //                     "field": "Miles_per_Gallon",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Cylinders",
+        //                     "type": "ordinal"
+        //                 }
+        //             },
+        //             "mark": "point"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This bar chart compares the average fuel efficiency of vehicles grouped by the number of cylinders. It provides an aggregated view to see how the cylinders might typically affect the mileage.",
+        //         "question": "How does the number of cylinders correlate with the fuel efficiency of the vehicles in the dataset?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "y": {
+        //                     // "aggregate": "average",
+        //                     "field": "Miles_per_Gallon",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Cylinders",
+        //                     "type": "ordinal"
+        //                 }
+        //             },
+        //             "mark": "bar"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This line chart demonstrates the trend of average fuel efficiency across different cylinder categories over the years. It helps to determine whether the relationship between the number of cylinders and fuel efficiency has changed over time.",
+        //         "question": "How does the number of cylinders correlate with the fuel efficiency of the vehicles in the dataset?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "color": {
+        //                     "field": "Cylinders",
+        //                     "type": "nominal"
+        //                 },
+        //                 "y": {
+        //                     // "aggregate": "average",
+        //                     "field": "Miles_per_Gallon",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Year",
+        //                     "timeUnit": "year",
+        //                     "type": "temporal"
+        //                 }
+        //             },
+        //             "mark": "line"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This visualization represents the trend in horsepower over the years, with horsepower on the y-axis and year on the x-axis, showing how horsepower has changed over time.",
+        //         "question": "What is the trend in horsepower and engine displacement over the years?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "y": {
+        //                     "field": "Horsepower",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Year",
+        //                     "timeUnit": "year",
+        //                     "type": "temporal"
+        //                 }
+        //             },
+        //             "mark": "line"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This visualization illustrates the trend in engine displacement over the years, with engine displacement on the y-axis and year on the x-axis, indicating how engine sizes have shifted over time.",
+        //         "question": "What is the trend in horsepower and engine displacement over the years?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "y": {
+        //                     "field": "Displacement",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Year",
+        //                     "timeUnit": "year",
+        //                     "type": "temporal"
+        //                 }
+        //             },
+        //             "mark": "line"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This visualization depicts a scatter plot comparing horsepower to engine displacement, with each point representing a vehicle, to show the relationship between the two variables.",
+        //         "question": "What is the trend in horsepower and engine displacement over the years?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "color": {
+        //                     "field": "Year",
+        //                     "timeUnit": "year",
+        //                     "type": "temporal"
+        //                 },
+        //                 "y": {
+        //                     "field": "Horsepower",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Displacement",
+        //                     "type": "quantitative"
+        //                 }
+        //             },
+        //             "mark": "point"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This visualization uses a line chart to show both horsepower and engine displacement trends over the years on a dual-axis, enabling us to observe the changes in both metrics simultaneously.",
+        //         "question": "What is the trend in horsepower and engine displacement over the years?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "color": {
+        //                     "field": "Origin",
+        //                     "type": "nominal"
+        //                 },
+        //                 "y": {
+        //                     "field": "Horsepower",
+        //                     "type": "quantitative"
+        //                 },
+        //                 // "y2": {
+        //                 //     "field": "Displacement",
+        //                 //     "type": "quantitative"
+        //                 // },
+        //                 "x": {
+        //                     "field": "Year",
+        //                     "timeUnit": "year",
+        //                     "type": "temporal"
+        //                 }
+        //             },
+        //             "mark": "line"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This visualization shows a bar chart comparing the average weight of vehicles from different origins. It allows us to see if there is a significant difference in the average weights for vehicles produced in different regions.",
+        //         "question": "Are there significant differences in average weight and acceleration between vehicles from different origins?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "y": {
+        //                     // "aggregate": "average",
+        //                     "field": "Weight_in_lbs",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Origin",
+        //                     "type": "nominal"
+        //                 }
+        //             },
+        //             "mark": "bar"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This visualization presents the average acceleration of vehicles by origin, using a bar chart. It visually represents if there are discrepancies in acceleration capabilities across different vehicle origins.",
+        //         "question": "Are there significant differences in average weight and acceleration between vehicles from different origins?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "y": {
+        //                     // "aggregate": "average",
+        //                     "field": "Acceleration",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Origin",
+        //                     "type": "nominal"
+        //                 }
+        //             },
+        //             "mark": "bar"
+        //         }
+        //     },
+        //     {
+        //         "explanation": "This visualization displays a scatter plot correlating the weight and acceleration of the vehicles, colored by their origin. This helps to explore if there is any relationship between the weight and acceleration across different origins.",
+        //         "question": "Are there significant differences in average weight and acceleration between vehicles from different origins?",
+        //         "vega-lite_code": {
+        //             "encoding": {
+        //                 "color": {
+        //                     "field": "Origin",
+        //                     "type": "nominal"
+        //                 },
+        //                 "y": {
+        //                     "field": "Acceleration",
+        //                     "type": "quantitative"
+        //                 },
+        //                 "x": {
+        //                     "field": "Weight_in_lbs",
+        //                     "type": "quantitative"
+        //                 }
+        //             },
+        //             "mark": "point"
+        //         }
         //     }
-        //     initData.charts = charts
+        // ]
 
-        //     console.log(initData, "???");
+        // var charts = []
+        // for(var i = 0; i < res.length; i++) {
+        //     res[i]["vega-lite_code"]._meta = {
+        //         uid: 0,
+        //         chid: i+1
+        //     },
+        //     charts.push(res[i]["vega-lite_code"])
+        // }
+        // initData.charts = charts
 
-        //     updateData(initData, "file")
-        // })
+        // updateData(initData, "file")
+
+        $.ajax({
+            context: this,
+            type: 'POST',
+            crossDomain: true,
+            url: "http://localhost:5000//updatequiz",
+            data: JSON.stringify(data),
+            contentType: 'application/json'
+        }).then((res) => {
+            var res_charts = res.charts
+
+            var charts = []
+            for(var i = 0; i < res_charts.length; i++) {
+                res_charts[i]["vega-lite_code"]._meta = {
+                    uid: 0,
+                    chid: i+1
+                }
+                charts.push(res_charts[i]["vega-lite_code"])
+            }
+            initData.charts = charts
+
+            updateData(initData, "file")
+        })
     })
 
     function appendGoals(data) {
