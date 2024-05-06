@@ -40,7 +40,7 @@ def parse_specs():
     return spec_dict
 
 
-def fix_vegalite_spec(json_spec, spec_dict):
+def fix_vegalite_spec_recur(json_spec, spec_dict):
     new_json_spec = {}
     for key in json_spec:
         value = json_spec[key]
@@ -48,14 +48,14 @@ def fix_vegalite_spec(json_spec, spec_dict):
             new_json_spec[key] = value
         if isinstance(value, dict):
             if key not in spec_dict:
-                new_json_spec[key] = fix_vegalite_spec(value, spec_dict)
+                new_json_spec[key] = fix_vegalite_spec_recur(value, spec_dict)
                 continue
             lst = set(list(value.keys()))
             if lst not in spec_dict[key]:
                 print(f"键 '{key}' 的值 '{lst}' 不在规范中")
             else:
                 print(f"键 '{key}' 的值 '{lst}' 在规范中")
-                new_json_spec[key] = fix_vegalite_spec(value, spec_dict)
+                new_json_spec[key] = fix_vegalite_spec_recur(value, spec_dict)
         elif isinstance(value, str):
             if key not in spec_dict:
                 new_json_spec[key] = value
@@ -91,4 +91,4 @@ json_str = json.loads(jstr)
 
 #check_vegalite_spec(json_str, specs)
 
-print(fix_vegalite_spec(json_str, specs))
+print(fix_vegalite_spec_recur(json_str, specs))
