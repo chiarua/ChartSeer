@@ -154,6 +154,7 @@ def update_question():
     del_lst.reverse()
     for i in del_lst:
         charts.pop(i)
+        fixed_charts.pop(i)
     dic = {"charts": charts, "charts_for_encode": fixed_charts}
     return jsonify(dic), 200
 
