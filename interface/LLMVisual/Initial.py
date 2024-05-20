@@ -3,29 +3,36 @@ from .TextGen import TextGenerator
 
 
 class Initialize:
-    def __init__(self):
+
+    def __init__(self, textgen=TextGenerator()):
         self.persona = None
         self.field_descr = None
         self.questions = None
         self.dataset_descr = None
         self.dataset_name = None
         self.chart_set = dict()
-        self.textgen = TextGenerator()
+        self.textgen = textgen
 
-    def initialize(self, path) -> None:
-        preview: dict = self.textgen.dataset_preview(path)['preview']
+    def initialize(self, data) -> None:
+        preview: dict = self.textgen.dataset_preview(data)['preview']
         # print(preview)
         self.dataset_name: str = preview['name']
         self.dataset_descr: str = preview['dataset_description']
         self.field_descr: dict = preview['field_description']
         self.questions: list = preview['questions']
-        self.persona = utils.load_prompts(query="VEGALITE_PROMPT")
+        self.persona = utils.load_prompts(query="VEGALITE_PROMPT")  # 生成图表提示词
+        self.instr = 'name: ' + self.dataset_name + '; dataset_description: ' + self.dataset_descr \
+                      + '; field_description: ' + str(self.field_descr) + '; the question: '
 
     def generate(self, question: str):
+        """
+        for generating charts.
+        :param question: a question as string
+        :return: three charts with explains
+        """
         persona = self.persona
         # Todo: add sample charts? if we should?
-        instruction = 'name: ' + self.dataset_name + '; dataset_description: ' + self.dataset_descr \
-                      + '; field_description: ' + str(self.field_descr) + '; the question: ' + question
+        instruction = self.instr + question
         message = self.textgen.generate(persona, instruction)
         return message['visualization_list']
 

@@ -133,6 +133,7 @@ def update_question():
     processor.update_questions(str_list)
     processor.generate_charts_ini()
     charts = processor.charts
+    print("these r charts")
     print(charts)
     # sudo-output
     # json_data = json.dumps(charts)

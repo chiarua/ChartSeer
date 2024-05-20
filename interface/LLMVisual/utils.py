@@ -94,44 +94,44 @@ def fix_charts(charts):
 
 
 #print(parse_specs())
-specs = parse_specs()
-jstr = '''
-[
-        {
-            "explanation": "This scatter plot visualization shows the correlation between vehicle weight and horsepower, with each dot representing a vehicle. Different colors can be used to represent the production year.",
-            "question": "What are the trends in vehicle weight and horsepower over the years?",
-            "vega-lite_code": {
-                "encoding": {
-                    "color": {
-                        "field": "Year",
-                        "timeUnit": "year",
-                        "type": "temporal"
-                    },
-                    "x": {
-                        "field": "Weight_in_lbs",
-                        "timeUnit": "yep",
-                        "type": "quantitative"
-                    },
-                    "y": {
-                        "field": "Horsepower",
-                        "type": "quantitative"
-                    }
-                },
-                "mark": "point"
-            }
-        }, {
-            "explanation": "This visualization compares the trends of vehicle weight and horsepower over the years. A dual-axis chart allows for comparing both metrics in parallel, with production year on the x-axis.",
-            "question": "What are the trends in vehicle weight and horsepower over the years?",
-            "vega-lite_code": {
-                "mark": "line"
-            }
-        }
-        ]
-    '''
-json_str = json.loads(jstr)
+# specs = parse_specs()
+# jstr = '''
+# [
+#         {
+#             "explanation": "This scatter plot visualization shows the correlation between vehicle weight and horsepower, with each dot representing a vehicle. Different colors can be used to represent the production year.",
+#             "question": "What are the trends in vehicle weight and horsepower over the years?",
+#             "vega-lite_code": {
+#                 "encoding": {
+#                     "color": {
+#                         "field": "Year",
+#                         "timeUnit": "year",
+#                         "type": "temporal"
+#                     },
+#                     "x": {
+#                         "field": "Weight_in_lbs",
+#                         "timeUnit": "year",
+#                         "type": "quantitative"
+#                     },
+#                     "y": {
+#                         "field": "Horsepower",
+#                         "type": "quantitative"
+#                     }
+#                 },
+#                 "mark": "point"
+#             }
+#         }, {
+#             "explanation": "This visualization compares the trends of vehicle weight and horsepower over the years. A dual-axis chart allows for comparing both metrics in parallel, with production year on the x-axis.",
+#             "question": "What are the trends in vehicle weight and horsepower over the years?",
+#             "vega-lite_code": {
+#                 "mark": "line"
+#             }
+#         }
+#         ]
+#     '''
+# json_str = json.loads(jstr)
 
 #check_vegalite_spec(json_str, specs)
 
 # print(fix_vegalite_spec_recur(json_str, specs))
 # print(check_root(json_str))
-print(fix_charts(json_str))
+# print(fix_charts(json_str))

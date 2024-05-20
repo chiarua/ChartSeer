@@ -11,7 +11,7 @@ os.environ["https_proxy"] = "http://localhost:7890"
 class TextGenerator:
     def __init__(self):
         self.client = OpenAI()
-        self.client.base_url = "https://api.gpt.ge/v1/"
+        # self.client.base_url = "https://api.v3.cm/v1/"
 
         self.prompts = utils.load_prompts()
         try:
@@ -30,12 +30,21 @@ class TextGenerator:
             model="gpt-4-turbo-preview",
             response_format={"type": "json_object"}
         )
-        print(response)
-        message = json.loads(response.choices[0].message.content)
+        json_str = response.choices[0].message.content
+        # checking for small probability things
+        if json_str[:6] == "```json":
+            json_str = json_str.replace('```json', '').replace('```', '')
+        print("this is json_str:")
+        print(json_str)
+        message = json.loads(json_str)
 
         return message
 
     def dataset_preview(self, dataset: str) -> dict:
+        """
+        :param dataset: a string including 7 cols of data
+        :return: a dict with 'preview': {'name' 'dataset_description' 'field description' 'questions'}
+        """
         persona = self.persona
         instruction = self.instruction + dataset
         dic = self.generate(persona, instruction)
