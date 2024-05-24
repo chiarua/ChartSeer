@@ -133,8 +133,9 @@ def update_question():
     processor.update_questions(str_list)
     processor.generate_charts_ini()
     charts = processor.charts
-    print("these r charts")
-    print(charts)
+    # print("these r charts")
+    # print(charts)
+
     # sudo-output
     # json_data = json.dumps(charts)
     # # 将JSON数据写入文件
@@ -142,6 +143,7 @@ def update_question():
     #     file.write(json_data)
     # with open('tmpinput.json', 'r') as file:
     #     charts: List[dict] = json.load(file)
+
     dic = utils.fix_charts(charts)
     print(dic)
     return jsonify(dic), 200
@@ -154,6 +156,20 @@ def add_question():
         q = str(q)
     processor.add_question(q)
     return "Question added", 200
+
+
+@app.route('/modify', methods=['POST'])
+def modify_chart():
+    """
+    我返回什么格式前端会更好改？
+    :return: new chart-explanation-question which needs to replace the old one
+    """
+    # how to catch the request?
+    req:dict = request.get_json()
+    user_input = req.get("user_input")
+    target_chart = req.get("target_chart")
+    new_chart = processor.modify_charts(target_chart, user_input)
+    return jsonify(new_chart), 200
 
 
 @app.errorhandler(InvalidUsage)

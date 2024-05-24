@@ -11,7 +11,6 @@ os.environ["https_proxy"] = "http://localhost:7890"
 class TextGenerator:
     def __init__(self):
         self.client = OpenAI()
-        # self.client.base_url = "https://api.v3.cm/v1/"
 
         self.prompts = utils.load_prompts()
         try:
@@ -21,6 +20,12 @@ class TextGenerator:
             raise ValueError(f"Key {e} does not exist in the JSON file.")
 
     def generate(self, persona: str, instruction: str):
+        """
+        core method, return json object which can be dict as GPT's output
+        :param persona: One of *model_prompts*
+        :param instruction: as task description to specify the task, it should has unique information of given task
+        :return: the *dict* which has dif
+        """
         system_message = {"role": "system",
                           "content": instruction}
         client = self.client
