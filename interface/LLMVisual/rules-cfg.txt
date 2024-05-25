@@ -43,9 +43,7 @@ x -> aggregate "+" field "+" type
 x -> bin "+" field "+" type
 x -> field "+" timeUnit "+" type
 x -> field "+" type
-x -> axis "+" field "+" type
 y -> aggregate "+" field "+" type
-y -> axis "+" field "+" type
 y -> bin "+" field "+" type
 y -> field "+" timeUnit "+" type
 y -> field "+" type

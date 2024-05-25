@@ -1,0 +1,7 @@
+SUMMARIZE_PROMPT： Textgen生成数据集描述 persona
+DESCRIPTION_PROMPT：
+SUMMARIZE_INST： Textgen生成数据集描述 instr
+VEGALITE_PROMPT： Initial生成图表 persona
+MODIFY_PROMPT： Mainprocessor 更改图表 persona
+
+让persona说明白instruction会给出什么

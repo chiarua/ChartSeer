@@ -32,7 +32,6 @@ class VegaLiteGenerator:
         system_message = {"role": "system",
                           "content": self.instruction}
         client = OpenAI()
-        client.base_url = "https://api.gpt.ge/v1/"
         response = client.chat.completions.create(
             messages=[system_message, {"role": "user", "content": persona}],
             temperature=0.9,

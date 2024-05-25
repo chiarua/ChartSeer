@@ -209,6 +209,7 @@ def decode_llm():
     str = INST
     vegas = request.get_json()[0]
     data = DATA
+    print(vegas)
     vlg.generate(str + vegas + data)
     codes = vlg.get_codes()
     expls = vlg.get_explanation()
