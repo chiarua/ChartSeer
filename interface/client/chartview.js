@@ -32,10 +32,10 @@ export default class ChartView extends EventEmitter {
 
     _init() {
         // text editor
-        // this._cheditor = ace.edit('editorcontainer', {
-        //     mode: 'ace/mode/json',
-        //     minLines: 20
-        // })
+        this._cheditor = ace.edit('editorcontainer', {
+            mode: 'ace/mode/json',
+            minLines: 20
+        })
 
         // ui controls
         var html = ''

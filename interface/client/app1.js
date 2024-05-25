@@ -19,14 +19,14 @@ window.d3 = d3
 var _ = require('lodash');
 window._ = _
 
-import { parseurl, updateData} from './utils.js'
+import { parseurl, updateData, initInterface} from './utils.js'
 
 // app instance
 var app = {}
 app.logger = []
 window.app = app
 
-var datafile = '/data/cars.json'
+var datafile = '/data/cars_clear.json'
 
 $(document).ready(function() {
     var parameters = parseurl()
@@ -35,6 +35,7 @@ $(document).ready(function() {
     
     // get and visualize data
     $.get(datafile).done((d) => {
-        updateData(d, datafile)
+        // updateData(d, datafile)
+        initInterface(d, datafile)
     })
 })
