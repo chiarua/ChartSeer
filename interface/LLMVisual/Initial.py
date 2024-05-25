@@ -44,3 +44,6 @@ class Initialize:
 
     def get_dataset_prev(self) -> str:
         return self.dataset_descr
+
+    def get_field_prev(self) -> str:
+        return self.field_descr

@@ -47,4 +47,5 @@ y -> aggregate "+" field "+" type
 y -> bin "+" field "+" type
 y -> field "+" timeUnit "+" type
 y -> field "+" type
+y -> field "+" type "+" title
 Nothing -> None

@@ -14,7 +14,7 @@ class TextGenerator:
 
         self.prompts = utils.load_prompts()
         try:
-            self.persona = utils.load_prompts(query='DESCRIPTION_PROMPT')
+            self.persona = utils.load_prompts(query='SUMMARIZE_PROMPT')
             self.instruction = utils.load_prompts(query='SUMMARIZE_INST')
         except KeyError as e:
             raise ValueError(f"Key {e} does not exist in the JSON file.")
@@ -39,8 +39,8 @@ class TextGenerator:
         # checking for small probability things
         if json_str[:6] == "```json":
             json_str = json_str.replace('```json', '').replace('```', '')
-        print("this is json_str:")
-        print(json_str)
+        # print("this is json_str:")
+        # print(json_str)
         message = json.loads(json_str)
 
         return message

@@ -7,6 +7,7 @@ from . import TextGen
 
 class FileUploadProcessor:
     def __init__(self):
+        self.field_preview = None
         self.dataset_preview = None
         self.questions = None
         self.charts = []  # contains 'vega-lite_code', 'explanation', 'question'
@@ -18,7 +19,9 @@ class FileUploadProcessor:
         self.ini.initialize(dataset)
         self.questions = self.ini.get_questions()
         self.dataset_preview = self.ini.get_dataset_prev()
+        self.field_preview = self.ini.get_field_prev()
         self.modify_persona = utils.load_prompts(query="MODIFY_PROMPT")
+        self.chart_desc_persona = utils.load_prompts(query="DESCRIPTION_PROMPT")
 
     def get_questions(self) -> list:
         return self.questions
@@ -63,3 +66,10 @@ class FileUploadProcessor:
         new_explanation = gpt_output.get("explanation")
         res_dic = {"vega-lite_code": new_chart, "explanation": new_explanation, "question": prev_question}
         return res_dic
+
+    def generate_chart_description(self, chart: str):
+        instr = "Here is the chart:" + chart + "Here is the description of the dataset:" + self.dataset_preview + "and here is the description of the data attributes: " + str(self.field_preview)
+
+        generator = TextGen.TextGenerator()
+        gpt_output: dict = generator.generate(self.chart_desc_persona, instr)
+        return gpt_output

@@ -203,19 +203,27 @@ def decode():
     return jsonify(specs)
 
 
+# def decode_llm():
+#     vlg = VegaLiteGenerator.VegaLiteGenerator()
+#     str = INST
+#     vegas = request.get_json()[0]
+#     data = DATA
+#     print(vegas)
+#     vlg.generate(str + vegas + data)
+#     codes = vlg.get_codes()
+#     print(codes)
+#     expls = vlg.get_explanation()
+#     print(expls)
+#     res: Dict[str, list] = {"codes": codes, "explanations": expls}
+#     return jsonify(res)
+
 @app.route('/decode_llm', methods=['POST'])
 def decode_llm():
-    vlg = VegaLiteGenerator.VegaLiteGenerator()
-    str = INST
-    vegas = request.get_json()[0]
-    data = DATA
-    print(vegas)
-    vlg.generate(str + vegas + data)
-    codes = vlg.get_codes()
-    expls = vlg.get_explanation()
-    res: Dict[str, list] = {"codes": codes, "explanations": expls}
-    return jsonify(res)
-
+    chart = request.get_json()[0]
+    desc = processor.generate_chart_description(str(chart))
+    # res: Dict[str, list] = {"codes": [chart], "explanations": [desc]}
+    print(desc)
+    return jsonify(desc)
 
 @app.route('/orientate', methods=['POST'])
 def orientate():
