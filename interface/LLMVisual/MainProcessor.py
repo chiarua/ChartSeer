@@ -22,6 +22,7 @@ class FileUploadProcessor:
         self.field_preview = self.ini.get_field_prev()
         self.modify_persona = utils.load_prompts(query="MODIFY_PROMPT")
         self.chart_desc_persona = utils.load_prompts(query="DESCRIPTION_PROMPT")
+        self.chart_desc_with_instr_persona = utils.load_prompts(query="DESCRIPTION_PROMPT_WITH_COMMAND")
 
     def get_questions(self) -> list:
         return self.questions
@@ -67,9 +68,29 @@ class FileUploadProcessor:
         res_dic = {"vega-lite_code": new_chart, "explanation": new_explanation, "question": prev_question}
         return res_dic
 
-    def generate_chart_description(self, chart: str):
-        instr = "Here is the chart:" + chart + "Here is the description of the dataset:" + self.dataset_preview + "and here is the description of the data attributes: " + str(self.field_preview)
+    def generate_chart_description(self, design_attr: str):
+        """
+        generate charts and description with design attribute and field description.
+        :param design_attr: design attribute
+        :return: dict {“explanations”:[], “codes”:[]}
+        """
+        instr = "Here is the chart:" + design_attr + "Here is the description of the dataset:" + self.dataset_preview + " and here is the description of the data attributes: " + str(
+            self.field_preview)
 
         generator = TextGen.TextGenerator()
         gpt_output: dict = generator.generate(self.chart_desc_persona, instr)
+        return gpt_output
+
+    def generate_chart_description_with_instr(self, design_attr: str, user_instr: str):
+        """
+        generate charts and description with design attribute and field description and user input.
+        :param design_attr: design attribute
+        :param user_instr: user command
+        :return: dict {“explanations”:[], “codes”:[]}
+        """
+        instr = "Here is the chart:" + design_attr + " Here is the description of the dataset:" + self.dataset_preview + " here is the description of the data attributes: " + str(
+            self.field_preview) + " and this is what the user wants the chart to explain: " + user_instr
+
+        generator = TextGen.TextGenerator()
+        gpt_output: dict = generator.generate(self.chart_desc_with_instr_persona, instr)
         return gpt_output

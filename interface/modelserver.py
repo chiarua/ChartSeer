@@ -136,7 +136,7 @@ def update_question():
     # print("these r charts")
     # print(charts)
 
-    # sudo-output
+    # 以下是sudo-output
     # json_data = json.dumps(charts)
     # # 将JSON数据写入文件
     # with open("tmpinput.json", "w") as file:
