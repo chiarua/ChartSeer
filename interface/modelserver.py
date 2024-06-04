@@ -161,10 +161,10 @@ def add_question():
 @app.route('/modify', methods=['POST'])
 def modify_chart():
     """
-    :return: new chart-explanation-question which needs to replace the old one
+    :return: new chart-explanation which needs to replace the old one
     """
     # how to catch the request?
-    req:dict = request.get_json()
+    req: dict = request.get_json()
     print(req)
     user_input = req.get("user_input")
     target_chart = req.get("target_chart")
@@ -220,11 +220,18 @@ def decode():
 
 @app.route('/decode_llm', methods=['POST'])
 def decode_llm():
-    chart = request.get_json()[0]
-    desc = processor.generate_chart_description(str(chart))
+    req = request.get_json()
+    print(req)
+    chart = req["data"][0]
+    idea = req["clientidea"]
+    if idea != '':
+        desc = processor.generate_chart_description_with_instr(str(chart), idea)
+    else:
+        desc = processor.generate_chart_description(str(chart))
     # res: Dict[str, list] = {"codes": [chart], "explanations": [desc]}
-    print(desc)
+    # print(desc)
     return jsonify(desc)
+
 
 @app.route('/orientate', methods=['POST'])
 def orientate():
