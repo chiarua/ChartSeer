@@ -128,7 +128,6 @@ export function displayAllCharts(container, created) {
 
 export function handleEvents() {
     app.sumview.on('clickchart', (ch) => {
-        console.log(ch);
         app.chartview.update(ch.originalspec, 'outside')
         $('#chartview .chartlabel').css('background-color', ch.created ? '#f1a340' : '#998ec3')
         $('#chartview .chartlabel').html('#' + ch.chid + '-u' + ch.uid)
@@ -587,9 +586,6 @@ export function initInterface(data, name) {
     app.data.chartdata = {attributes: data.attributes, values: data.data}
     app.data.chartspecs = data.charts
 
-    console.log('data', data);
-    console.log('app.data', app.data);
-
     app.sumview = new SumView(d3.select('#sumview'), app.data, {
         backend: 'http://localhost:5000',
         size: [$('#sumview').width(), $('#sumview').height()],
@@ -621,9 +617,6 @@ export function updateData(data, name) {
     app.data = {}
     app.data.chartdata = {attributes: data.attributes, values: data.data}
     app.data.chartspecs = data.charts
-
-    console.log('data', data);
-    console.log('app.data', app.data);
 
     app.sumview = new SumView(d3.select('#sumview'), app.data, {
         backend: 'http://localhost:5000',

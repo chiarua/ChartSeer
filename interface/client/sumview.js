@@ -17,6 +17,12 @@ import {rank} from 'compassql/build/src/ranking/ranking'
 import clusterfck from '../components/clusterfck/lib/clusterfck'
 import {BubbleSet, PointPath, BSplineShapeGenerator, ShapeSimplifier} from '../components/bubblesets-js/bubblesets'
 
+// 用户用意
+var clientidea = ""
+
+//单击延时触发
+var  clickTimeId
+
 export default class SumView extends EventEmitter {
     constructor(container, data, conf) {
         super()
@@ -125,7 +131,10 @@ export default class SumView extends EventEmitter {
             .attr('y', 0)
             .attr('width', this.conf.size[0])
             .attr('height', this.conf.size[1])
-            .on('click', () => {
+            .on('dblclick', () => {
+                // 取消上次延时未执行的方法
+                clearTimeout(clickTimeId);
+
                 if(!this.conf.norecommend && this._charts.length >= 3) {
                     var p = d3.mouse(this._svgDrawing.node())
                     this._charts = _.filter(this._charts, (c) => {return !c.created})
@@ -136,6 +145,30 @@ export default class SumView extends EventEmitter {
                     alert('You need to create at least 3 charts.')
                 }
             })
+            .on('click', () => {
+                var p = d3.mouse(this._svgDrawing.node())
+                
+                // 取消上次延时未执行的方法
+                clearTimeout(clickTimeId);
+                //执行延时
+                clickTimeId = setTimeout( () => {
+                    //此处为单击事件要执行的代码
+                    clientidea = $('#geninput input').val()
+
+                    if(clientidea == "") {
+                        alert("请先输入意图！")
+                    }else {
+                        // show coordinate
+                        $('#xvalue').html(p[0])
+                        $('#yvalue').html(p[1])
+
+                        this._charts = _.filter(this._charts, (c) => {return !c.created})
+                        this.render()
+                        this._recommendCharts(p)
+                    }
+
+                }, 200)
+            })
             .on('mouseover', () => {
                 this._svgDrawing.select('.cursorc').style('visibility', 'visible')
             })
@@ -145,6 +178,10 @@ export default class SumView extends EventEmitter {
             .on('mousemove', () => {
                 var p = d3.mouse(this._svgDrawing.node())
                 this._svgDrawing.select('.cursorc').attr('cx', p[0]).attr('cy', p[1])
+
+                // show coordinate
+                // $('#xvalue').html(p[0])
+                // $('#yvalue').html(p[1])
             })
         this._svgDrawing.append('g')
             .attr('class', 'chartlayer')
@@ -743,13 +780,18 @@ export default class SumView extends EventEmitter {
                 contentType: 'application/json'
             })
         }).then((data) => {
+            var reqdata = {}
+            reqdata.data = data
+            reqdata.clientidea = clientidea
+            console.log(reqdata);
+
             embeddings = data;
             return $.ajax({
                 context: this,
                 type: 'POST',
                 crossDomain: true,
                 url: this.conf.backend + '/decode_llm', // 修改URL为新的后端处理路径
-                data: JSON.stringify(data),
+                data: JSON.stringify(reqdata),
                 contentType: 'application/json',
                 success: function(response) {
                     console.log("处理结果:", response);
