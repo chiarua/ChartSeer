@@ -161,14 +161,15 @@ def add_question():
 @app.route('/modify', methods=['POST'])
 def modify_chart():
     """
-    我返回什么格式前端会更好改？
     :return: new chart-explanation-question which needs to replace the old one
     """
     # how to catch the request?
     req:dict = request.get_json()
+    print(req)
     user_input = req.get("user_input")
     target_chart = req.get("target_chart")
     new_chart = processor.modify_charts(target_chart, user_input)
+    print(new_chart)
     return jsonify(new_chart), 200
 
 
