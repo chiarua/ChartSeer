@@ -229,7 +229,7 @@ def decode_llm():
     else:
         desc = processor.generate_chart_description(str(chart))
     # res: Dict[str, list] = {"codes": [chart], "explanations": [desc]}
-    # print(desc)
+    print(desc)
     return jsonify(desc)
 
 
