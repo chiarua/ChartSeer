@@ -119,6 +119,16 @@ def upload_file():
     # return jsonify(tmp)
 
 
+@app.route('/uploadjson', methods=['POST'])
+def upload_json():
+    data = request.get_json()
+    sample = data.get('data', [])[:7]
+    df = pd.DataFrame(sample)
+    columns = df.columns
+    processor.uploaded(', '.join(columns))
+    return jsonify(processor.get_questions())
+
+
 @app.route('/updatequiz', methods=['POST'])
 def update_question():
     """
