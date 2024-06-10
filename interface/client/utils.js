@@ -19,7 +19,7 @@ var initData = {}
 // var ques_expl = []
 var refine_chart = {}
 
-var recordfilter = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+var recordfilter = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {},]
 
 var attributes
 var dataset
@@ -627,11 +627,14 @@ export function handleEvents() {
         reader.onload = function(e) {
             var data = JSON.parse(e.target.result)
             initData = data
+            console.log("data", initData);
+
 
             dataset = data.data
 
             updateData(data, 'file', true)
         };
+
 
         $.ajax({
             dataType: "json",
