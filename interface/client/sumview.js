@@ -117,6 +117,11 @@ export default class SumView extends EventEmitter {
             .attr('height', this.conf.size[1])
         this._svgDrawing = this.svg.append('g')
             .attr('translate', 'transform(' + this.conf.margin + ',' + this.conf.margin + ')')
+
+        // this._svgDrawing.append('defs')
+        //     .append('filter').attr('id', 'image')
+        //     .append('feImage').attr('href', './images/miaozhun.png')
+
         this._svgDrawing.append('g')
             .attr('class', 'bubblelayer')
         this._svgDrawing.append('g')
@@ -125,6 +130,42 @@ export default class SumView extends EventEmitter {
             .attr('class', 'cursorc')
             .attr('r', this.conf.size[0] * this._params.recradius)
             .style('visibility', 'hidden')
+
+        // this._svgDrawing.append('path')
+        //     .attr('d', 'M521.37 840.5c-182.82 0-331.54-148.72-331.54-331.54s148.72-331.54 331.54-331.54 331.54 148.72 331.54 331.54S704.19 840.5 521.37 840.5z m0-612.08c-154.69 0-280.54 125.85-280.54 280.54S366.68 789.5 521.37 789.5s280.54-125.85 280.54-280.54-125.85-280.54-280.54-280.54z')
+        //     .attr('fill', '#424244')
+        //     .attr('stroke-width', '5')
+        // this._svgDrawing.append('path')
+        //     .attr('d', 'M709.88 494.88h255.03v51.01H709.88zM57.75 494.88h255.03v51.01H57.75zM495.87 314.563V59.533h51.01v255.03zM495.878 964.067v-255.03h51.01v255.03z')
+        //     .attr('fill', '#424244')
+        // this._svgDrawing.append('path')
+        //     .attr('d', 'M521.38 520.38m-59.48 0a59.48 59.48 0 1 0 118.96 0 59.48 59.48 0 1 0-118.96 0Z')
+        //     .attr('fill', '#424244')
+
+        $("#miaozhun").on('mouseover', () => {
+            // this._svgDrawing.select('.cursorc').style('visibility', 'hidden')
+
+            $("#miaozhun").css('visibility', 'visible')
+        }).on('mousemove', () => {
+            // this._svgDrawing.select('.cursorc').style('visibility', 'hidden')
+
+            $("#miaozhun").css('visibility', 'visible')
+        }).on('mousemout', () => {
+
+            $("#miaozhun").css('visibility', 'hidden')
+        })
+
+        $("#sumview").on('mouseover', () => {
+
+            $("#sumview").css('visibility', 'visible')
+        }).on('mousemove', () => {
+
+            $("#sumview").css('visibility', 'visible')
+        }).on('mousemout', () => {
+
+            $("#sumview").css('visibility', 'hidden')
+        })
+
         this._svgDrawing.append('rect')
             .attr('class', 'background')
             .attr('x', 0)
@@ -134,6 +175,14 @@ export default class SumView extends EventEmitter {
             .on('dblclick', () => {
                 // 取消上次延时未执行的方法
                 clearTimeout(clickTimeId);
+
+                $("#dingwei").css({
+                    // 'left': p[0] - 20 + 'px',
+                    // 'top': p[1] - 30 + 'px',
+                    'visibility': 'hidden'
+                })
+
+                clientidea = ""
 
                 if(!this.conf.norecommend && this._charts.length >= 3) {
                     var p = d3.mouse(this._svgDrawing.node())
@@ -147,7 +196,7 @@ export default class SumView extends EventEmitter {
             })
             .on('click', () => {
                 var p = d3.mouse(this._svgDrawing.node())
-                
+
                 // 取消上次延时未执行的方法
                 clearTimeout(clickTimeId);
                 //执行延时
@@ -158,6 +207,12 @@ export default class SumView extends EventEmitter {
                     if(clientidea == "") {
                         alert("请先输入意图！")
                     }else {
+                        $("#dingwei").css({
+                            'left': p[0] - 20 + 'px',
+                            'top': p[1] - 30 + 'px',
+                            'visibility': 'visible'
+                        })
+
                         // show coordinate
                         $('#xvalue').html(p[0])
                         $('#yvalue').html(p[1])
@@ -170,14 +225,23 @@ export default class SumView extends EventEmitter {
                 }, 200)
             })
             .on('mouseover', () => {
-                this._svgDrawing.select('.cursorc').style('visibility', 'visible')
+                // this._svgDrawing.select('.cursorc').style('visibility', 'visible')
+
+                $("#miaozhun").css('visibility', 'visible')
             })
             .on('mouseout', () => {
-                this._svgDrawing.select('.cursorc').style('visibility', 'hidden')
+                // this._svgDrawing.select('.cursorc').style('visibility', 'hidden')
+
+                $("#miaozhun").css('visibility', 'hidden')
             })
             .on('mousemove', () => {
                 var p = d3.mouse(this._svgDrawing.node())
                 this._svgDrawing.select('.cursorc').attr('cx', p[0]).attr('cy', p[1])
+
+                $("#miaozhun").css({
+                    'left': p[0] - 15 + 'px',
+                    'top': p[1] - 15 + 'px'
+                })
 
                 // show coordinate
                 // $('#xvalue').html(p[0])
@@ -310,7 +374,7 @@ export default class SumView extends EventEmitter {
         chartsenter.append('circle')
             .attr('r', this._params.dotr)
             .attr('cx', 0)
-            .attr('cy', 0)        
+            .attr('cy', 0)      
 
         chartsenter.append('text')
             .attr('class', 'marktext')
@@ -525,7 +589,6 @@ export default class SumView extends EventEmitter {
                 this._charts.forEach((d, i) => {
                     d.coords = data[i] //为坐标赋值
                 })
-                console.log(this._charts)
                 callback()
             })
         }
@@ -584,7 +647,7 @@ export default class SumView extends EventEmitter {
 
         _chartDistance(chart1, chart2) {//加权距离公式,α
             var endist = 0
-            console.log(chart1.embedding.length);
+            // console.log(chart1.embedding.length);
             for(var z = 0; z < chart1.embedding.length; z++) {
                 var d = chart1.embedding[z] - chart2.embedding[z]
                 endist += d * d
@@ -783,7 +846,6 @@ export default class SumView extends EventEmitter {
             var reqdata = {}
             reqdata.data = data
             reqdata.clientidea = clientidea
-            console.log(reqdata);
 
             embeddings = data;
             return $.ajax({
@@ -801,8 +863,20 @@ export default class SumView extends EventEmitter {
                 }
             })
         }).done((data) => {
-            normspecs = data.codes
+            normspecs = data.codes  
+
             explanations = data.explanations
+
+            if(app.data.chartspecs.length < app.data.explanations.length) {
+                app.data.explanations.splice(app.data.chartspecs.length, app.data.explanations.length - app.data.chartspecs.length)
+                app.data.questions.splice(app.data.chartspecs.length, app.data.questions.length - app.data.chartspecs.length)
+            }
+            
+            for(let i = 0; i < explanations.length; i++) {
+                app.data.questions.push(clientidea)
+                app.data.explanations.push(explanations[i])
+            }
+
             var vlcharts = {}
             for(var i = 0; i < normspecs.length; i++) {
                 //if(normspecs[i] in vlcharts) continue

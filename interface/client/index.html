@@ -7,10 +7,18 @@
             src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
+
         <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
         <script type="text/javascript" src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
     </head>
     <body>
+        
+        <!-- <svg t="1717506715612" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4315" width="50" height="50">
+            <path d="M521.37 840.5c-182.82 0-331.54-148.72-331.54-331.54s148.72-331.54 331.54-331.54 331.54 148.72 331.54 331.54S704.19 840.5 521.37 840.5z m0-612.08c-154.69 0-280.54 125.85-280.54 280.54S366.68 789.5 521.37 789.5s280.54-125.85 280.54-280.54-125.85-280.54-280.54-280.54z" fill="#424244" p-id="4316"></path>
+            <path d="M709.88 494.88h255.03v51.01H709.88zM57.75 494.88h255.03v51.01H57.75zM495.87 314.563V59.533h51.01v255.03zM495.878 964.067v-255.03h51.01v255.03z" fill="#424244" p-id="4317"></path>
+            <path d="M521.38 520.38m-59.48 0a59.48 59.48 0 1 0 118.96 0 59.48 59.48 0 1 0-118.96 0Z" fill="#424244" p-id="4318"></path>
+        </svg> -->
+
         <div id="main_window">
             <!-- <div id="toolbar">
                 <input type="file" id="datafile" name="datafile" />
@@ -36,7 +44,7 @@
                 <div id="charteditor">
                     <div id="chartediterdesc">
                         <div class="title">  </div>
-                        <div class="content"> </div>
+                        <div class="content">  </div>
                     </div>
                 </div>
                 <div id="chartcode">
@@ -95,7 +103,10 @@
                         <button> <img src="./assets/images/import.png" alt="" width="20px"> Export Charts </button>
                     </div>
                 </div>
-                <div id="sumview"></div>
+                <div id="sumview">
+                    <img id="miaozhun" src="./assets/images/miaozhun.png" alt="">
+                    <img id="dingwei" src="./assets/images/dingwei.png" alt="">
+                </div>
                 <span id="datsetspan" class="panel-header">Dateset</span>
                 <div id="dataview">
                     <table class="compact hover cell-border nowrap"></table>
@@ -131,8 +142,64 @@
                     <div id="goalsexplain">
                     </div>
                     <div id="goalinput">
-                        <input type="text" name="" id="goalTitle" placeholder="Add Goals..."><button id="addgoal"> <img src="./assets/images/edit.png" alt="..." width="18px"> Add </button>
-                        <button id="submit"> Submit </button>
+                        <!-- <input type="text" name="" id="goalTitle" placeholder="Add Goals..."><button id="addgoal"> <img src="./assets/images/edit.png" alt="..." width="18px"> Add </button>
+                        <button id="submit"> Submit </button> -->
+                    </div>
+                </div>
+            </div>
+            <div id="panel6">
+                <span class="panel-header"> Filter </span>
+                <div id="filter">
+                    <div id="columnscontent">
+                        <span>Columns:</span>
+                        <div id="columns"></div>
+                    </div>
+                    <div id="rowsandcolumnscontent">
+                        <span>#Rows: </span> <span id="rowsnum"></span> <span>#Columns: </span> <span id="columnsnum"></span>
+                        <div id="rowsandcolumns">
+                            <div class="rowsandcolumnsheader">
+                                <img src="./assets/images/filterB.png" alt="">
+                                <span>Filter</span>
+                            </div>
+                            <div class="rowsandcolumnsbody">
+                                <!-- str -->
+                                <!-- <div id="strfilter">
+                                    <div class="strheader">original</div>
+                                    <div class="strbody">
+                                        <input type="checkbox" value=""><span></span>
+                                    </div>
+                                    <div class="strfooter">
+                                        <button id="conformfilter"> Conform </button>
+                                    </div>
+                                </div> -->
+                                <!-- num -->
+                                <!-- <div id="numfilter">
+                                    <div class="numheader"></div>
+                                    <div class="numbody">
+                                            <div id="minrange">
+                                                <span>Min:</span> <span id="minnum">0</span>
+                                                <div class="minbar">
+                                                    <div class="minprogress"></div>
+                                                    <div class="mindot"></div>
+                                                </div>
+                                            </div>
+                                            <div id="maxrange">
+                                                <span>Max:</span> <span id="maxnum">300</span>
+                                                <div class="maxbar">
+                                                    <div class="maxprogress"></div>
+                                                    <div class="maxdot"></div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <div class="numfooter">
+                                        <button id="conformfilter"> Conform </button>
+                                    </div>
+                                </div> -->
+                            </div>
+                            <!-- <div class="rowsandcolumnsfooter">
+                                <button id="newgoals"> 更新GOALS </button>
+                            </div> -->
+                        </div>
                     </div>
                 </div>
             </div>

@@ -16,16 +16,374 @@ import ChartView from './chartview.js'
 var logging = false
 
 var initData = {}
-var ques_expl = []
+// var ques_expl = []
 var refine_chart = {}
+
+var recordfilter = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}]
+
+var attributes
+var dataset
 
 export var vegaConfig = {
     axis: {labelFontSize:9, titleFontSize:9, labelAngle:-45, labelLimit:50},
     legend: {gradientLength:20, labelFontSize:6, titleFontSize:6, clipHeight:20}
 }
 
-export function createDataTable(scrollH) {
+// 进度条
+function slider(obj, idx, dataname, maximum = 300) { // maximum最大值默认为100
+    var range = document.getElementById(obj + idx),
+        bar = range.getElementsByTagName("div")[0],
+        progress = bar.children[0],
+        dot = bar.children[1],
+        num = range.getElementsByTagName("span")[1];
+    if(obj == "minrange") {
+        bar.className = "minbar";
+        progress.className = "minprogress";
+        dot.className = "mindot";
+        num.className = "minnum";
+
+        $("#maxrange" + idx + " .maxnum").text(0)
+        var min = recordfilter[idx-1][dataname + 'min']
+
+        if(min != 0) {
+            $("#minrange" + idx + " .minnum").text(min)
+
+            progress.style.width = parseFloat(min) / maximum * 200 + 'px'
+            dot.style.left = parseFloat(min) / maximum * 200 - parseFloat(min) / maximum * 20 + 'px'
+        }
+    } else {
+        bar.className = "maxbar";
+        progress.className = "maxprogress";
+        dot.className = "maxdot";
+        num.className = "maxnum";
+
+        progress.style.width = 200 + 'px'
+        dot.style.left = 179 + 'px'
+
+        $("#maxrange" + idx + " .maxnum").text(maximum)
+        var max = recordfilter[idx-1][dataname + 'max']
+
+        if(max != 300) {
+            $("#maxrange" + idx + " .maxnum").text(max)
+
+            progress.style.width = parseFloat(max) / maximum * 200 + 'px'
+            dot.style.left = parseFloat(max) / maximum * 200 - parseFloat(max) / maximum * 20 + 'px'
+        }
+    }
+
+    /*
+     * offsetWidth 获取当前节点的宽度 （width + border + padding）
+     **/
+    // 总长度减去原点覆盖的部分
+    var rest = bar.offsetWidth - dot.offsetWidth;
+ 
+    // 鼠标按下事件
+    dot.onmousedown = function(ev) {
+        /*
+            * offsetLeft 获取的是相对于父对象的左边距, 返回的是数值， 没有单位
+            */
+        let dotL = dot.offsetLeft;
+        let e = ev || window.event; //兼容性
+        /*
+            * clientX 事件属性返回当事件被触发时鼠标指针向对于浏览器页面（或客户区）的水平坐标。
+            */
+        let mouseX = e.clientX //鼠标按下的位置
+        window.onmousemove = function(ev) {
+            let e = ev || window.event;
+            // 浏览器当前位置减去鼠标按下的位置
+            let moveL = e.clientX - mouseX; //鼠标移动的距离
+            // 保存newL是必要的    
+            let newL = dotL + moveL; //left值
+            // 判断最大值和最小值
+            if (newL < 0) {
+                newL = 0;
+            }
+            if (newL >= rest) {
+                newL = rest;
+            }
+            // 改变left值
+            dot.style.left = newL + 'px';
+            // 计算比例
+            let bili = newL / rest * maximum;
+            num.innerHTML = Math.ceil(bili);
+            progress.style.width = bar.offsetWidth * Math.ceil(bili) / maximum + 'px';
+            return false; //取消默认事件
+        }
+        window.onmouseup = function() {
+            window.onmousemove = false; //解绑移动事件
+            return false;
+        }
+        return false;
+    };
+    // 点击进度条
+    bar.onclick = function(ev) {
+        let left = ev.clientX - range.offsetLeft - dot.offsetWidth / 2;
+        if (left < 0) {
+            left = 0;
+        }
+        if (left >= rest) {
+            left = rest;
+        }
+        dot.style.left = left + 'px';
+        let bili = left / rest * maximum;
+        num.innerHTML = Math.ceil(bili);
+        progress.style.width = bar.offsetWidth * Math.ceil(bili) / maximum + 'px';
+        return false;
+    }
+}
+
+// 获取最大值和最小值 to do
+function getMinAndMax(data, column) {
+    // 最大值
+    var max = Math.max.apply(Math, data.map(item => { return item[column] }))
+    
+    // 最小值
+    var min = Math.min.apply(Math, data.map(item => { return item[column] }))
+
+    var obj = {}
+    obj.min = min
+    obj.max = max
+
+    return obj
+}
+
+// 获取所有种类
+function getAllCategories(data, column) {
+    let arr = []
+
+    for(let i = 0; i < data.length; i++) {
+        arr.push(data[i][column])
+    }
+
+    let newarr = new Set(arr)
+
+    return [...newarr]
+}
+
+// 过滤数据集
+function filterDataset() {
+    let newdataset = dataset
+    let obj = {}
+    for(let i = 0; i < attributes.length; i++ ) {
+        if(!$.isEmptyObject(recordfilter[i])) {
+            let column = attributes[i]
+
+            if(column[1] == "num") {
+                let min = recordfilter[i][column[0] + 'min']
+                let max = recordfilter[i][column[0] + 'max']
+                newdataset = newdataset.filter(item => item[column[0]] >= min && item[column[0]] <= max)
+            }else if(column[1] == "str") {
+                let choosecategories = recordfilter[i][column[0] + 's']
+                newdataset = newdataset.filter(item => choosecategories.indexOf(item[column[0]]) != -1)
+            }
+
+            obj.charts = []
+            obj.attributes = attributes
+            obj.data = newdataset
+
+            updateData(obj, 'file')            
+        }
+    }
+
+    $("#rowsnum").text(newdataset.length)
+    $("#columnsnum").text(attributes.length + 1)
+
+    // 更新goals
+    $.ajax({
+        dataType: "json",
+        data: JSON.stringify(obj),
+        url: "http://localhost:5000/uploadjson",
+        type: "post",
+        contentType: 'application/json',
+        success:function (reponse) {
+            var data = reponse
+            exporationgoals(data)
+        },
+        error:function () {
+            console.log('error');
+        },
+    });
+}
+
+export function createDataTable(scrollH, ifone) {
     var columns = _.keys(app.data.chartdata.values[0]).map((d) => {return {title: d} })
+
+    const imgSrc = require('./assets/images/filter.png')
+
+    attributes = app.data.chartdata.attributes
+
+    if(ifone) {
+        $("#rowsnum").text(dataset.length)
+        $("#columnsnum").text(attributes.length + 1)
+        for(let i = 1; i < columns.length; i++) {
+            $("#columns").append($('<div />', {id: 'column' + i}))
+            $("#column" + i).append($("<img />").attr('src', imgSrc))
+            $("#column" + i).append($('<span />').text(columns[i].title))  
+            
+            $("#column" + i).click(() => {
+                var dataname = attributes[i-1][0]
+                var datatype = attributes[i-1][1]
+
+                // console.log(datatype);
+    
+                var columnname = $("#column" + i).text()
+    
+                if(datatype == "num") {
+                    var minimum = getMinAndMax(dataset, columnname).min
+                    var maximum = getMinAndMax(dataset, columnname).max
+    
+                    // console.log(minimum, maximum);
+    
+                    $("#rowsandcolumns .rowsandcolumnsbody").append($('<div />', {id: 'numfilter' + i}))
+                    $("#numfilter" + i).css({
+                        "border": "1px solid rgb(201, 201, 201)",
+                        "height": "200px",
+                        "margin-bottom": "10px"
+                    })
+                    $("#numfilter" + i).append(`
+                        <div class="numheader">
+                            <span class='title'></span>
+                            <span class='cancel'>x</span>
+                        </div>
+                        <div class="numbody">
+                        </div>
+                        <div class="numfooter">
+                        </div>
+                        `)
+                    
+                    $("#numfilter" + i + ' .numbody').append($('<div />', {id: 'minrange' + i}))
+                    $("#numfilter" + i + ' .numbody').append($('<div />', {id: 'maxrange' + i}))
+    
+                    $("#numfilter" + i + ' .numfooter').append(`
+                        <button class="conformfilter"> Conform </button>
+                        `)
+    
+                    $("#minrange" + i).css({
+                        "width":"200px",
+                        "height":"30px",
+                        "position":"relative"
+                    })
+    
+                    $("#maxrange" + i).css({
+                        "width":"200px",
+                        "height":"30px",
+                        "position":"relative",
+                        "margin-top": "25px"
+                    })
+    
+                    $("#minrange" + i).append(`
+                            <span>Min:</span> <span id="minnum">0</span>
+                            <div class="minbar">
+                                <div class="minprogress"></div>
+                                <div class="mindot"></div>
+                            </div>
+                        `)
+                    $("#maxrange" + i).append(`
+                        <span>Max:</span> <span id="maxnum">300</span>
+                        <div class="maxbar">
+                            <div class="maxprogress"></div>
+                            <div class="maxdot"></div>
+                        </div>
+                    `)
+    
+                    slider("minrange", i, dataname, Math.ceil(maximum))
+                    slider("maxrange", i, dataname, Math.ceil(maximum))
+    
+                    $("#numfilter"+ i +" .numheader .title").text(columnname)
+                    $("#numfilter"+ i +" .numheader .cancel").css({
+                        "float": "right",
+                    })
+    
+                    $("#numfilter"+ i +" .numheader .cancel").click(() => {
+                        $("#numfilter"+ i).remove()
+                    })
+    
+                    $("#numfilter" + i + " .conformfilter").click(() => {
+                        var min = $("#numfilter" + i +  " .minnum").text()
+                        var max = $("#numfilter" + i +  " .maxnum").text()
+                
+                        var minandmaxobj = {}
+                        minandmaxobj[dataname + "min"] = min
+                        minandmaxobj[dataname + "max"] = max
+                
+                        recordfilter[i-1] = minandmaxobj
+    
+                        filterDataset()
+                    }) 
+                }else if(datatype == "str") {
+                    var categories = getAllCategories(dataset, columnname)
+
+                    $("#rowsandcolumns .rowsandcolumnsbody").append($('<div />', {id: 'strfilter' + i}))
+                    $("#strfilter" + i).css({
+                        "border": "1px solid rgb(201, 201, 201)",
+                        "height": "180px",
+                        "margin-bottom": "10px",
+                        "overflow": "auto"
+                    })
+                    $("#strfilter" + i).append(`
+                        <div class="strheader">
+                            <span class='title'></span>
+                            <span class='cancel'>x</span>
+                        </div>
+                        <div class="strbody">
+                        </div>
+                        <div class="strfooter">
+                        </div>
+                        `)
+                    
+                        $("#strfilter"+ i +" .strheader .title").text(columnname)
+                        $("#strfilter"+ i +" .strheader .cancel").css({
+                            "float": "right",
+                        })
+
+                    for(let j = 0; j < categories.length; j++) {
+                        $("#strfilter" + i + ' .strbody').append($('<div />', {id: 'showcategroy' + j}))
+                        $("#strfilter" + i + " #showcategroy" + j).append($(`
+                            <input type="checkbox" value="">
+                            <span></span>
+                            `))
+                        
+                        $("#strfilter" + i + " #showcategroy" + j).css({
+                            "margin-top": "5px"
+                        })
+                        
+                        $("#strfilter" + i + " #showcategroy" + j + ' input').attr("value", categories[j])
+                        $("#strfilter" + i + " #showcategroy" + j + ' span').text(categories[j])
+
+                        if(recordfilter[i-1][columnname + 's'] && recordfilter[i-1][columnname + 's'].length > 0) {
+                            if(recordfilter[i-1][columnname + 's'].indexOf(categories[j]) != -1) {
+                                $("#strfilter" + i + " #showcategroy" + j + ' input').prop('checked', true)
+                            }
+                        }
+
+                        $("#strfilter" + i + " #showcategroy" + j + ' input').click(function () {
+                            let categoryvalue = $("#strfilter" + i + " #showcategroy" + j + ' input').val()
+                            if(!recordfilter[i-1][columnname + "s"])
+                                recordfilter[i-1][columnname + "s"] = []
+                            if ($("#strfilter" + i + " #showcategroy" + j + ' input').prop('checked') == true) {
+                                recordfilter[i-1][columnname + "s"].push(categoryvalue)
+                            } else {
+                                recordfilter[i-1][columnname + "s"] = recordfilter[i-1][columnname + "s"].filter(item => item != categoryvalue)
+                            }
+                        })
+                    }
+
+                    $("#strfilter" + i + ' .strfooter').append(`
+                        <button class="conformfilter"> Conform </button>
+                        `)
+
+                    $("#strfilter"+ i +" .strheader .cancel").click(() => {
+                        $("#strfilter"+ i).remove()
+                    })
+    
+                    $("#strfilter" + i + " .conformfilter").click(() => {
+                        filterDataset()
+                    })
+                }
+            })
+        }
+    }
+
     var tabledata = app.data.chartdata.values.map((d) => {
         var record = []
         for(var i = 0; i < columns.length; i++)
@@ -132,10 +490,13 @@ export function handleEvents() {
         $('#chartview .chartlabel').css('background-color', ch.created ? '#f1a340' : '#998ec3')
         $('#chartview .chartlabel').html('#' + ch.chid + '-u' + ch.uid)
 
+        $('#chartediterdesc .title').html("")
+        $('#chartediterdesc .content').html("")
+
         // 显示对应问题和解释
-        if(ques_expl.length > 0) {
-            $('#chartediterdesc .title').html(ques_expl[ch.chid].question)
-            $('#chartediterdesc .content').html(ques_expl[ch.chid].explanation)
+        if(app.data.explanations.length > 0) {
+            $('#chartediterdesc .title').html(app.data.questions[ch.chid])
+            $('#chartediterdesc .content').html(app.data.explanations[ch.chid])
         }
 
         // 记录要修改的图表
@@ -267,7 +628,9 @@ export function handleEvents() {
             var data = JSON.parse(e.target.result)
             initData = data
 
-            updateData(data, 'file')
+            dataset = data.data
+
+            updateData(data, 'file', true)
         };
 
         $.ajax({
@@ -303,7 +666,7 @@ export function handleEvents() {
                     url: "http://localhost:5000/modify",
                     type: "post",
                     contentType: 'application/json',
-                    success:function (reponse) {
+                    success:function (response) {
                         console.log(response);
                     },
                     error:function () {
@@ -323,50 +686,6 @@ export function exporationgoals(data) {
     // $('#addgoal').click((e) => {
     //     addGoal()
     // })
-
-    $('#addgoal').click((e) => {
-        var text = getText()
-        if(text == '') {
-            alert("该内容不能为空！")
-        }else {
-            data.push(text)
-            console.log(data)
-            clearText()
-            appendGoals(data)
-        }
-    })
-
-    $('#submit').click((e) => {
-        $.ajax({
-            context: this,
-            type: 'POST',
-            crossDomain: true,
-            url: "http://localhost:5000//updatequiz",
-            data: JSON.stringify(data),
-            contentType: 'application/json'
-        }).then((res) => {
-            // 全局记录 questions & explanations
-            ques_expl = res.charts
-
-            var res_charts = res.charts
-
-            var charts = []
-            for(var i = 0; i < res_charts.length; i++) {
-                res_charts[i]["vega-lite_code"]._meta = {
-                    uid: 0,
-                    chid: i
-                }
-                // res_charts[i]["vega-lite_code"].explanation = res_charts[i]["explanation"]
-                // res_charts[i]["vega-lite_code"].question = res_charts[i]["question"]
-                charts.push(res_charts[i]["vega-lite_code"])
-            }
-            initData.charts = charts
-
-            console.log('initData', initData);
-
-            updateData(initData, "file")
-        })
-    })
 
     function appendGoals(data) {
         $('#goalsexplain').children().remove()
@@ -452,6 +771,66 @@ export function exporationgoals(data) {
                 // $(e.target.parentElement.parentElement).remove()
             })
         }
+
+        $('#goalinput').children().remove()
+        $('#goalinput').append(`
+            <input type="text" name="" id="goalTitle" placeholder="Add Goals..."><button id="addgoal"> <img alt="..." width="18px"> Add </button>
+            <button id="submit"> Submit </button>
+            `)
+        
+        const imgEdit = require('./assets/images/edit.png')
+        $('#goalinput img').attr("src", imgEdit)
+
+        
+        $('#addgoal').click((e) => {
+            var text = getText()
+            if(text == '') {
+                alert("该内容不能为空！")
+            }else {
+                data.push(text)
+                // console.log(data)
+                clearText()
+                appendGoals(data)
+            }
+        })
+    
+        $('#submit').click((e) => {
+            $.ajax({
+                context: this,
+                type: 'POST',
+                crossDomain: true,
+                url: "http://localhost:5000//updatequiz",
+                data: JSON.stringify(data),
+                contentType: 'application/json'
+            }).then((res) => {
+                // 全局记录 questions & explanations
+                // app.data.ques_expl = res.charts
+    
+                var res_charts = res.charts
+    
+                var charts = []
+                var questions = []
+                var explanations = [] 
+                for(var i = 0; i < res_charts.length; i++) {
+                    res_charts[i]["vega-lite_code"]._meta = {
+                        uid: 0,
+                        chid: i
+                    }
+                    // res_charts[i]["vega-lite_code"].explanation = res_charts[i]["explanation"]
+                    // res_charts[i]["vega-lite_code"].question = res_charts[i]["question"]
+                    charts.push(res_charts[i]["vega-lite_code"])
+                    questions.push(res_charts[i]["question"])
+                    explanations.push(res_charts[i]["explanation"])
+                }
+                initData.charts = charts
+                initData.questions = questions
+                initData.explanations = explanations
+    
+                console.log('initData', initData);
+    
+                updateData(initData, "file", false)
+            })
+        })
     }
 
     function getText() {
@@ -586,6 +965,8 @@ export function initInterface(data, name) {
     app.data.chartdata = {attributes: data.attributes, values: data.data}
     app.data.chartspecs = data.charts
 
+    app.data.ques_expl = []
+
     app.sumview = new SumView(d3.select('#sumview'), app.data, {
         backend: 'http://localhost:5000',
         size: [$('#sumview').width(), $('#sumview').height()],
@@ -611,12 +992,15 @@ export function initInterface(data, name) {
     handleEvents()
 }
 
-export function updateData(data, name) {
+export function updateData(data, name, ifone) {
     $("#datafile").html(name)
 
     app.data = {}
     app.data.chartdata = {attributes: data.attributes, values: data.data}
     app.data.chartspecs = data.charts
+
+    app.data.questions = data.questions
+    app.data.explanations = data.explanations
 
     app.sumview = new SumView(d3.select('#sumview'), app.data, {
         backend: 'http://localhost:5000',
@@ -633,7 +1017,7 @@ export function updateData(data, name) {
     })
 
     // 数据集
-    createDataTable(280)
+    createDataTable(280, ifone)
 
     // search();
     // displayAllCharts('#allchartsview', false)
