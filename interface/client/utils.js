@@ -215,12 +215,14 @@ export function createDataTable(scrollH, ifone) {
     if(ifone) {
         $("#rowsnum").text(dataset.length)
         $("#columnsnum").text(attributes.length + 1)
-        for(let i = 0; i < columns.length; i++) {
+        for(let i = 0; i < attributes.length; i++) {
             $("#columns").append($('<div />', {id: 'column' + i}))
             $("#column" + i).append($("<img />").attr('src', imgSrc))
-            $("#column" + i).append($('<span />').text(columns[i].title))  
+            $("#column" + i).append($('<span />').text(attributes[i][0]))  
             
             $("#column" + i).click(() => {
+
+                console.log(i);
                 var dataname = attributes[i][0]
                 var datatype = attributes[i][1]
 
