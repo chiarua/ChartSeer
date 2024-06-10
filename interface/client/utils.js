@@ -188,6 +188,9 @@ function filterDataset() {
     $("#rowsnum").text(newdataset.length)
     $("#columnsnum").text(attributes.length + 1)
 
+    initData.data = newdataset
+    // console.log(initData);
+
     // 更新goals
     $.ajax({
         dataType: "json",
@@ -221,8 +224,6 @@ export function createDataTable(scrollH, ifone) {
             $("#column" + i).append($('<span />').text(attributes[i][0]))  
             
             $("#column" + i).click(() => {
-
-                console.log(i);
                 var dataname = attributes[i][0]
                 var datatype = attributes[i][1]
 
@@ -629,14 +630,11 @@ export function handleEvents() {
         reader.onload = function(e) {
             var data = JSON.parse(e.target.result)
             initData = data
-            console.log("data", initData);
-
 
             dataset = data.data
 
             updateData(data, 'file', true)
         };
-
 
         $.ajax({
             dataType: "json",
@@ -831,9 +829,9 @@ export function exporationgoals(data) {
                 initData.questions = questions
                 initData.explanations = explanations
     
-                console.log('initData', initData);
+                // console.log('initData', initData);
     
-                updateData(initData, "file", false)
+                updateData(initData, 'file')
             })
         })
     }
