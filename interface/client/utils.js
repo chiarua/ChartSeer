@@ -43,7 +43,7 @@ function slider(obj, idx, dataname, maximum = 300) { // maximum最大值默认�
         num.className = "minnum";
 
         $("#maxrange" + idx + " .maxnum").text(0)
-        var min = recordfilter[idx-1][dataname + 'min']
+        var min = recordfilter[idx][dataname + 'min']
 
         if(min != 0) {
             $("#minrange" + idx + " .minnum").text(min)
@@ -61,7 +61,7 @@ function slider(obj, idx, dataname, maximum = 300) { // maximum最大值默认�
         dot.style.left = 179 + 'px'
 
         $("#maxrange" + idx + " .maxnum").text(maximum)
-        var max = recordfilter[idx-1][dataname + 'max']
+        var max = recordfilter[idx][dataname + 'max']
 
         if(max != 300) {
             $("#maxrange" + idx + " .maxnum").text(max)
@@ -215,14 +215,14 @@ export function createDataTable(scrollH, ifone) {
     if(ifone) {
         $("#rowsnum").text(dataset.length)
         $("#columnsnum").text(attributes.length + 1)
-        for(let i = 1; i < columns.length; i++) {
+        for(let i = 0; i < columns.length; i++) {
             $("#columns").append($('<div />', {id: 'column' + i}))
             $("#column" + i).append($("<img />").attr('src', imgSrc))
             $("#column" + i).append($('<span />').text(columns[i].title))  
             
             $("#column" + i).click(() => {
-                var dataname = attributes[i-1][0]
-                var datatype = attributes[i-1][1]
+                var dataname = attributes[i][0]
+                var datatype = attributes[i][1]
 
                 // console.log(datatype);
     
@@ -306,7 +306,7 @@ export function createDataTable(scrollH, ifone) {
                         minandmaxobj[dataname + "min"] = min
                         minandmaxobj[dataname + "max"] = max
                 
-                        recordfilter[i-1] = minandmaxobj
+                        recordfilter[i] = minandmaxobj
     
                         filterDataset()
                     }) 
@@ -350,20 +350,20 @@ export function createDataTable(scrollH, ifone) {
                         $("#strfilter" + i + " #showcategroy" + j + ' input').attr("value", categories[j])
                         $("#strfilter" + i + " #showcategroy" + j + ' span').text(categories[j])
 
-                        if(recordfilter[i-1][columnname + 's'] && recordfilter[i-1][columnname + 's'].length > 0) {
-                            if(recordfilter[i-1][columnname + 's'].indexOf(categories[j]) != -1) {
+                        if(recordfilter[i][columnname + 's'] && recordfilter[i][columnname + 's'].length > 0) {
+                            if(recordfilter[i][columnname + 's'].indexOf(categories[j]) != -1) {
                                 $("#strfilter" + i + " #showcategroy" + j + ' input').prop('checked', true)
                             }
                         }
 
                         $("#strfilter" + i + " #showcategroy" + j + ' input').click(function () {
                             let categoryvalue = $("#strfilter" + i + " #showcategroy" + j + ' input').val()
-                            if(!recordfilter[i-1][columnname + "s"])
-                                recordfilter[i-1][columnname + "s"] = []
+                            if(!recordfilter[i][columnname + "s"])
+                                recordfilter[i][columnname + "s"] = []
                             if ($("#strfilter" + i + " #showcategroy" + j + ' input').prop('checked') == true) {
-                                recordfilter[i-1][columnname + "s"].push(categoryvalue)
+                                recordfilter[i][columnname + "s"].push(categoryvalue)
                             } else {
-                                recordfilter[i-1][columnname + "s"] = recordfilter[i-1][columnname + "s"].filter(item => item != categoryvalue)
+                                recordfilter[i][columnname + "s"] = recordfilter[i][columnname + "s"].filter(item => item != categoryvalue)
                             }
                         })
                     }
