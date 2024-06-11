@@ -12,7 +12,7 @@ class FileUploadProcessor:
         self.questions = None
         self.charts = []  # contains 'vega-lite_code', 'explanation', 'question'
         self.modify_persona = None
-
+        self.question_expls = dict()
         self.ini = Initialize()
 
     def uploaded(self, dataset: str):
@@ -23,6 +23,9 @@ class FileUploadProcessor:
         self.modify_persona = utils.load_prompts(query="MODIFY_PROMPT")
         self.chart_desc_persona = utils.load_prompts(query="DESCRIPTION_PROMPT")
         self.chart_desc_with_instr_persona = utils.load_prompts(query="DESCRIPTION_PROMPT_WITH_COMMAND")
+        self.quiz_desc_persona = utils.load_prompts(query="QUIZ_DESCRIPTION")
+        for q in self.questions:
+            self.generate_quiz_description(q)
 
     def get_questions(self) -> list:
         return self.questions
@@ -95,3 +98,17 @@ class FileUploadProcessor:
         generator = TextGen.TextGenerator()
         gpt_output: dict = generator.generate(self.chart_desc_with_instr_persona, instr)
         return gpt_output
+
+    def generate_quiz_description(self, quiz: str):
+        """
+        :param quiz: the question
+        :return: the description
+        """
+        if self.question_expls.get(quiz) is None:
+            instr = "Here is the question:" + quiz + " here is the description of the data attributes: " + str(
+                self.field_preview)
+
+            generator = TextGen.TextGenerator()
+            gpt_output: dict = generator.generate(self.quiz_desc_persona, instr)
+            self.question_expls[quiz] = gpt_output.get('description')
+        return self.question_expls[quiz]

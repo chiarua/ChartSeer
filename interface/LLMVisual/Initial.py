@@ -31,7 +31,6 @@ class Initialize:
         :return: three charts with explains
         """
         persona = self.persona
-        # Todo: add sample charts? if we should?
         instruction = self.instr + question
         message = self.textgen.generate(persona, instruction)
         return message['visualization_list']

@@ -168,6 +168,15 @@ def add_question():
     return "Question added", 200
 
 
+@app.route('/quizexpl', methods=['POST'])
+def quiz_explanation():
+    q = request.get_json()
+    if isinstance(q, str):
+        q = str(q)
+    processor.generate_quiz_description(q)
+    return "Question explanation added", 200
+
+
 @app.route('/modify', methods=['POST'])
 def modify_chart():
     """
@@ -213,20 +222,6 @@ def decode():
         raise InvalidUsage(e.message)
     return jsonify(specs)
 
-
-# def decode_llm():
-#     vlg = VegaLiteGenerator.VegaLiteGenerator()
-#     str = INST
-#     vegas = request.get_json()[0]
-#     data = DATA
-#     print(vegas)
-#     vlg.generate(str + vegas + data)
-#     codes = vlg.get_codes()
-#     print(codes)
-#     expls = vlg.get_explanation()
-#     print(expls)
-#     res: Dict[str, list] = {"codes": codes, "explanations": expls}
-#     return jsonify(res)
 
 @app.route('/decode_llm', methods=['POST'])
 def decode_llm():
