@@ -53,11 +53,15 @@ html, body {
 #genprocess {
   position: relative;
   z-index: 1;
+  border-left: #91c4c3 2px solid;
+  border-right: #91c4c3 2px solid;
+  padding: 10px;
 
   #geninput {
     text-align: center;
     height: 50px;
-    margin-top: 10px;
+    // margin-top: 10px;
+    
 
     input {
       height: 40px;
@@ -529,7 +533,7 @@ html, body {
 
 #datsetspan {
   position: relative;
-  top: 394px;
+  top: 390px;
   display: block;
   width: 100%;
   background-color: #91c4c3;
@@ -717,11 +721,12 @@ html, body {
   position: absolute;
   width: 100%;
   left: 0;
-  top: 20px;
+  top: 110px;
   bottom: 310px;
   display: inline-block;
   margin-top: 5px;
   border: #91c4c3 2px solid;
+  border-top: none;
   cursor: none;
 
   #miaozhun {
@@ -749,8 +754,8 @@ html, body {
   position: absolute;
   left: 0;
   width: 100%;
-  height: 277px;
-  top: 554px;
+  height: 291px;
+  top: 540px;
   font-size: 11px;
   display: inline-block;
   border: #91c4c3 2px solid;
