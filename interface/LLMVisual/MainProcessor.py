@@ -7,6 +7,9 @@ from . import TextGen
 
 class FileUploadProcessor:
     def __init__(self):
+        self.quiz_desc_persona = None
+        self.chart_desc_with_instr_persona = None
+        self.chart_desc_persona = None
         self.field_preview = None
         self.dataset_preview = None
         self.questions = None
@@ -24,11 +27,12 @@ class FileUploadProcessor:
         self.chart_desc_persona = utils.load_prompts(query="DESCRIPTION_PROMPT")
         self.chart_desc_with_instr_persona = utils.load_prompts(query="DESCRIPTION_PROMPT_WITH_COMMAND")
         self.quiz_desc_persona = utils.load_prompts(query="QUIZ_DESCRIPTION")
-        for q in self.questions:
-            self.generate_quiz_description(q)
 
-    def get_questions(self) -> list:
-        return self.questions
+    def get_questions(self) -> dict:
+        desc = []
+        for q in self.questions:
+            desc.append(self.generate_quiz_description(q))
+        return {"questions": self.questions, "explanations": desc}
 
     def get_preview(self) -> str:
         return self.dataset_preview

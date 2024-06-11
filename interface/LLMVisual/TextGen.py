@@ -32,7 +32,7 @@ class TextGenerator:
         response = client.chat.completions.create(
             messages=[system_message, {"role": "user", "content": persona}],
             temperature=0.9,
-            model="gpt-4-turbo_preview",
+            model="gpt-4-turbo-preview",
             response_format={"type": "json_object"}
         )
         json_str = response.choices[0].message.content

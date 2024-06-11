@@ -106,6 +106,9 @@ class InvalidUsage(Exception):
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    """
+    :return: json{"questions": list, "explanations": list}
+    """
     file = request.files['file']
     data = json.load(file)
     sample = data.get('data', [])[:7]
@@ -121,6 +124,9 @@ def upload_file():
 
 @app.route('/uploadjson', methods=['POST'])
 def upload_json():
+    """
+    :return: json{"questions": list, "explanations": list}
+    """
     data = request.get_json()
     sample = data.get('data', [])[:7]
     df = pd.DataFrame(sample)
@@ -165,16 +171,8 @@ def add_question():
     if isinstance(q, str):
         q = str(q)
     processor.add_question(q)
-    return "Question added", 200
+    return processor.generate_quiz_description(q), 200
 
-
-@app.route('/quizexpl', methods=['POST'])
-def quiz_explanation():
-    q = request.get_json()
-    if isinstance(q, str):
-        q = str(q)
-    processor.generate_quiz_description(q)
-    return "Question explanation added", 200
 
 
 @app.route('/modify', methods=['POST'])
