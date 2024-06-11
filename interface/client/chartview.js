@@ -67,6 +67,35 @@ export default class ChartView extends EventEmitter {
             $('#' + comp).append(html)
         })
 
+        // $('#refine').unbind("click").bind("click", (e) => {
+        //     // if($.isEmptyObject(refine_chart)) {
+        //     //     alert("请先选择要修改的图表！")
+        //     // }else {
+        //         if($('#refinecontent').val()) {
+        //             var input_value = $('#refinecontent').val()
+    
+        //             var modify_data = {}
+        //             modify_data.target_chart = JSON.parse(JSON.stringify(refine_chart))
+        //             modify_data.user_input = input_value
+    
+        //             $.ajax({
+        //                 data: JSON.stringify(modify_data),
+        //                 url: "http://localhost:5000/modify",
+        //                 type: "post",
+        //                 contentType: 'application/json',
+        //                 success:function (response) {
+        //                     console.log(response);
+        //                 },
+        //                 error:function () {
+        //                     console.log('error');
+        //                 },
+        //             });
+        //         }else {
+        //             alert("请输入修改内容！")
+        //         }
+        //     // }
+        // })
+
         // buttons
         $('#add').click((e) => {
             this.update(this._cheditor.session.getValue(), 'texteditor')

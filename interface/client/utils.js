@@ -24,6 +24,8 @@ var recordfilter = [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, 
 var attributes
 var dataset
 
+var initchartslength
+
 export var vegaConfig = {
     axis: {labelFontSize:9, titleFontSize:9, labelAngle:-45, labelLimit:50},
     legend: {gradientLength:20, labelFontSize:6, titleFontSize:6, clipHeight:20}
@@ -489,6 +491,7 @@ export function displayAllCharts(container, created) {
 
 export function handleEvents() {
     app.sumview.on('clickchart', (ch) => {
+        // console.log(ch, "ch");
         app.chartview.update(ch.originalspec, 'outside')
         $('#chartview .chartlabel').css('background-color', ch.created ? '#f1a340' : '#998ec3')
         $('#chartview .chartlabel').html('#' + ch.chid + '-u' + ch.uid)
@@ -503,7 +506,8 @@ export function handleEvents() {
         }
 
         // 记录要修改的图表
-        refine_chart = ch.originalspec
+        refine_chart = JSON.parse(JSON.stringify(ch))
+        // console.log("refine_chart", refine_chart);
 
         if(ch.created) {
             $('#update, #remove').attr('disabled', true)
@@ -660,26 +664,55 @@ export function handleEvents() {
             if($('#refinecontent').val()) {
                 var input_value = $('#refinecontent').val()
 
-                var modify_data = {}
-                modify_data.target_chart = JSON.parse(JSON.stringify(refine_chart))
-                modify_data.user_input = input_value
+                if(!app.sumview.data.chartspecs[app.sumview.selectedChartID]) {
+                    alert("请先添加该图表！")
+                } else {
+                    var modify_data = {}
+                    modify_data.target_chart = refine_chart.originalspec
+                    modify_data.user_input = input_value
 
-                $.ajax({
-                    data: JSON.stringify(modify_data),
-                    url: "http://localhost:5000/modify",
-                    type: "post",
-                    contentType: 'application/json',
-                    success:function (response) {
-                        console.log(response);
-                    },
-                    error:function () {
-                        console.log('error');
-                    },
-                });
+                    $.ajax({
+                        data: JSON.stringify(modify_data),
+                        url: "http://localhost:5000/modify",
+                        type: "post",
+                        contentType: 'application/json',
+                        success:function (response) {
+                                app.chartview.update(response["vega-lite_code"], 'outside')
+                                app.chartview.emit('update-chart', response["vega-lite_code"])
+                        },
+                        error:function () {
+                            console.log('error');
+                        },
+                    });
+                }
             }else {
                 alert("请输入修改内容！")
             }
         }
+    })
+
+    $("#addchart").unbind("click").bind("click", (e) => {
+        if(app.sumview.data.chartspecs[app.sumview.selectedChartID]) {
+            alert("该图表已存在！")
+        } else {
+            app.data.explanations.splice(app.data.chartspecs.length, app.data.explanations.length - app.data.chartspecs.length)
+            app.data.questions.splice(app.data.chartspecs.length, app.data.questions.length - app.data.chartspecs.length)
+
+            // let clientidea = $('#geninput input').val()
+            let explanation = $("#chartediterdesc .content").text()
+            app.data.questions.push(app.sumview.clientidea)
+            app.data.explanations.push(explanation)
+
+            app.chartview.emit('add-chart', refine_chart.originalspec)
+        }
+    })
+
+    $("#reset").unbind("click").bind("click", (e) => {
+        app.data.chartspecs.splice(initchartslength, app.data.chartspecs.length - initchartslength)
+        app.data.explanations.splice(initchartslength, app.data.chartspecs.length - initchartslength)
+        app.data.questions.splice(initchartslength, app.data.chartspecs.length - initchartslength)
+
+        app.sumview.update()
     })
 }
 
@@ -828,7 +861,7 @@ export function exporationgoals(data) {
                 initData.charts = charts
                 initData.questions = questions
                 initData.explanations = explanations
-    
+
                 // console.log('initData', initData);
     
                 updateData(initData, 'file')
@@ -1001,6 +1034,8 @@ export function updateData(data, name, ifone) {
     app.data = {}
     app.data.chartdata = {attributes: data.attributes, values: data.data}
     app.data.chartspecs = data.charts
+    
+    initchartslength = data.charts.length
 
     app.data.questions = data.questions
     app.data.explanations = data.explanations
@@ -1012,6 +1047,10 @@ export function updateData(data, name, ifone) {
         chartclr: ['#f1a340', '#998ec3']
     })
     app.sumview.update()
+
+    // if(app.data.chartspecs.length > 0) {
+    //     app.data.initcharts = app.data.chartspecs
+    // }
 
     app.chartview = new ChartView({}, {
         attributes: app.data.chartdata.attributes,

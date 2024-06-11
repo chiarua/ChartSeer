@@ -568,9 +568,9 @@ html, body {
 
 #charteditor {
   box-sizing: border-box;
-  width: 95%;
-  top: 315px;
-  left: 2.5%;
+  width: 100%;
+  // top: 315px;
+  left: 0;
   height: 270px;
   position: absolute;
   display: inline-block;
@@ -607,9 +607,9 @@ html, body {
 
 #chartcode {
   box-sizing: border-box;
-  width: 95%;
-  top: 607px;
-  left: 2.5%;
+  width: 100%;
+  top: 572px;
+  left: 0;
   height: 210px;
   position: absolute;
   display: inline-block;
@@ -658,7 +658,7 @@ html, body {
   input {
     height: 30px;
     border-radius: 5px 0 0 5px;
-    width: 70%;
+    width: 55%;
     border: 2px solid rgb(171, 171, 171);
     display: inline-block;
     box-sizing: border-box;
@@ -667,7 +667,7 @@ html, body {
   }
 
   button {
-    width: 25%;
+    width: 20%;
     height: 30px;
     border: 2px solid rgb(171, 171, 171);
     border-left: none ;
@@ -686,6 +686,23 @@ html, body {
 
   button:disabled {
     opacity: 0.5;
+  }
+
+  #addchart {
+    width: 15%;
+    height: 30px;
+    border: 2px solid rgb(171, 171, 171);
+    border-radius: 5px;
+    background-color: #91c4c36e;
+    vertical-align: middle;
+  }
+
+  #addchart:hover {
+    background-color: #91c4c397;
+  }
+
+  #addchart:active {
+    background-color: #91c4c3c1;
   }
 }
 

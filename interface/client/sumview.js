@@ -182,7 +182,7 @@ export default class SumView extends EventEmitter {
                     'visibility': 'hidden'
                 })
 
-                clientidea = ""
+                this.clientidea = ""
 
                 if(!this.conf.norecommend && this._charts.length >= 3) {
                     var p = d3.mouse(this._svgDrawing.node())
@@ -202,9 +202,10 @@ export default class SumView extends EventEmitter {
                 //执行延时
                 clickTimeId = setTimeout( () => {
                     //此处为单击事件要执行的代码
-                    clientidea = $('#geninput input').val()
+                    this.clientidea = $('#geninput input').val()
+                    $('#geninput input').val("")
 
-                    if(clientidea == "") {
+                    if(this.clientidea == "") {
                         alert("请先输入意图！")
                     }else {
                         $("#dingwei").css({
@@ -845,7 +846,7 @@ export default class SumView extends EventEmitter {
         }).then((data) => {
             var reqdata = {}
             reqdata.data = data
-            reqdata.clientidea = clientidea
+            reqdata.clientidea = this.clientidea
 
             embeddings = data;
             return $.ajax({
@@ -873,7 +874,7 @@ export default class SumView extends EventEmitter {
             }
             
             for(let i = 0; i < explanations.length; i++) {
-                app.data.questions.push(clientidea)
+                app.data.questions.push(this.clientidea)
                 app.data.explanations.push(explanations[i])
             }
 

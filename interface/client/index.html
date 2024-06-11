@@ -34,22 +34,24 @@
                     <span class="chartlabel"></span>
                     <span class="editorbuttons">
                         <input type="text" placeholder="Modify Chart" id="refinecontent"><button id="refine"> <img src="./assets/images/edit.png" alt="..." width="12px"> Refine </button>
+                        <button id="addchart"> ADD </button>
                     </span>
                     <!-- <span class="editorbuttons">
                         <button id="add" style="color:#28a745">Add</button>
                         <button id="update" style="color:#007bff">Update</button>
                         <button id="remove" style="color:#dc3545">Remove</button>
                     </span> -->
-                </div>
-                <div id="charteditor">
-                    <div id="chartediterdesc">
-                        <div class="title">  </div>
-                        <div class="content">  </div>
+                    <div id="charteditor">
+                        <div id="chartediterdesc">
+                            <div class="title">  </div>
+                            <div class="content">  </div>
+                        </div>
+                    </div>
+                    <div id="chartcode">
+                        <div id="editorcontainer"></div>
                     </div>
                 </div>
-                <div id="chartcode">
-                    <div id="editorcontainer"></div>
-                </div>
+                
                 <!-- <div id="charteditor">
                     <div id="chartcomposer">
                         <label>Mark</label><select id="ch-mark"></select><br/>
@@ -98,9 +100,9 @@
                             <input type="file" id="importdata"></input>
                         </button>
                         <!-- <button id="importdata"> <img src="./assets/images/export.png" alt="..." width="14px"> Import Data </button> -->
-                        <button> <img src="./assets/images/reset.png" alt="..." width="14px"> Reset </button>
-                        <button> <img src="./assets/images/back.png" alt="..." width="14px"> Rollback </button>
-                        <button> <img src="./assets/images/import.png" alt="" width="20px"> Export Charts </button>
+                        <button id="reset"> <img src="./assets/images/reset.png" alt="..." width="14px"> Reset </button>
+                        <button id="rollback"> <img src="./assets/images/back.png" alt="..." width="14px"> Rollback </button>
+                        <button id="exportcharts"> <img src="./assets/images/import.png" alt="" width="20px"> Export Charts </button>
                     </div>
                 </div>
                 <div id="sumview">
