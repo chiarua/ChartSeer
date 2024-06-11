@@ -171,7 +171,7 @@ def add_question():
     if isinstance(q, str):
         q = str(q)
     processor.add_question(q)
-    return processor.generate_quiz_description(q), 200
+    return processor.generate_quiz_description(q)
 
 
 
