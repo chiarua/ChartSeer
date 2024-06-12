@@ -150,7 +150,8 @@ html, body {
 
 #panel1 {
   position: absolute;
-  width: 365px;
+  // width: 365px;
+  width: 23%;
   height: 827px;
   display: inline-block;
   right: 0;
@@ -270,8 +271,10 @@ html, body {
 #panel2 {
   position: absolute;
   height: 828px;
-  width: 795px;
-  left: 527px;
+  // width: 795px;
+  width: 48%;
+  // left: 527px;
+  left: 28%;
   right: 520px;
   display: inline-block;
   margin: 0px;
@@ -299,7 +302,8 @@ html, body {
 
 #panel6 {
   position: absolute;
-  width: 510px;
+  // width: 510px;
+  width: 27%;
   // height: 510px;
   left: 0;
   top: 490px;
@@ -549,7 +553,8 @@ html, body {
 
 #panel5 {
   position: absolute;
-  width: 510px;
+  // width: 510px;
+  width: 27%;
   height: 510px;
   left: 0;
   display: inline-block;
