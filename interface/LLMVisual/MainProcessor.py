@@ -10,7 +10,7 @@ class FileUploadProcessor:
         self.quiz_desc_persona = None
         self.chart_desc_with_instr_persona = None
         self.chart_desc_persona = None
-        self.field_preview = None
+        self.field_preview: dict = None
         self.dataset_preview = None
         self.questions = None
         self.charts = []  # contains 'vega-lite_code', 'explanation', 'question'
@@ -44,6 +44,7 @@ class FileUploadProcessor:
         self.questions.append(q)
 
     def generate_charts_ini(self) -> None:
+        self.charts = []
         for q in self.questions:
             self.generate_charts_user(q)
 
@@ -116,3 +117,6 @@ class FileUploadProcessor:
             gpt_output: dict = generator.generate(self.quiz_desc_persona, instr)
             self.question_expls[quiz] = gpt_output.get('description')
         return self.question_expls[quiz]
+
+    def get_field(self) -> list:
+        return list(self.field_preview.keys())
