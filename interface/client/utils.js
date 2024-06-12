@@ -677,6 +677,8 @@ export function handleEvents() {
                         type: "post",
                         contentType: 'application/json',
                         success:function (response) {
+                                app.data.explanations[refine_chart.chid] = response.explanation
+
                                 app.chartview.update(response["vega-lite_code"], 'outside')
                                 app.chartview.emit('update-chart', response["vega-lite_code"])
                         },
@@ -708,6 +710,14 @@ export function handleEvents() {
     })
 
     $("#reset").unbind("click").bind("click", (e) => {
+        if(app.data.chartspecs.length == 0) {
+            alert("请先生成图表！")
+            return
+        }
+        if(app.data.chartspecs.length == initchartslength) {
+            alert("已是最初推荐图表！")
+            return
+        }
         app.data.chartspecs.splice(initchartslength, app.data.chartspecs.length - initchartslength)
         app.data.explanations.splice(initchartslength, app.data.chartspecs.length - initchartslength)
         app.data.questions.splice(initchartslength, app.data.chartspecs.length - initchartslength)
@@ -807,7 +817,7 @@ export function exporationgoals(data) {
 
     function appendGoals(data) {
         $('#goalsexplain').children().remove()
-        for(var i = 0; i < data.length; i++) {
+        for(var i = 0; i < data.questions.length; i++) {
             $('#goalsexplain').append($("<div />", {id: 'goal' + i}))
             $('#goal' + i).append(`
                 <div class="goal">
@@ -815,11 +825,12 @@ export function exporationgoals(data) {
                     <div class="title"></div>
                     <div class="deleteicon">-</div>
                 </div>
-                <div class="explain">What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?''What is the correlation between the weight of a vehicle and its fuel efficiency?'</div>
+                <div class="explain"></div>
             `)
     
             $('#goal' + i + ' .goal' + ' span').text(i+1)
-            $('#goal' + i + ' .goal' + ' .title').text(data[i])
+            $('#goal' + i + ' .goal' + ' .title').text(data.questions[i])
+            $('#goal' + i + ' .explain').text(data.explanations[i])
     
             $('#goal' + i).css({"width": "95%", "margin": "10px auto"})
             $('#goal' + i + ' .goal').css({"border-radius": "10px 10px 0 0", "background-color": "#a5d5d42b", "padding": "10px 10px 5px 10px", "display": "flex", "justify-content": "space-between"})
@@ -862,8 +873,8 @@ export function exporationgoals(data) {
                     var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
                     if(text !== newText) {
                         // todo 修改数组里的数据
-                        data.splice(idx, 1, newText)
-                        console.log(data);
+                        data.questions.splice(idx, 1, newText)
+                        console.log(data.questions);
                     }
                 })
     
@@ -874,8 +885,8 @@ export function exporationgoals(data) {
                         var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
                         if(text !== newText) {
                             // todo 修改数组里的数据
-                            data.splice(idx, 1, newText)
-                            console.log(data);
+                            data.questions.splice(idx, 1, newText)
+                            console.log(data.questions);
                         }
                     }
                 })
@@ -883,8 +894,8 @@ export function exporationgoals(data) {
     
             $('#goal' + i + ' .goal' + ' .deleteicon').click((e) => {
                 var idx = parseInt($(e.target.parentElement.parentElement).attr("id").slice(-1))
-                data.splice(idx, 1)
-                console.log(data);
+                data.questions.splice(idx, 1)
+                data.explanations.splice(idx, 1)
                 appendGoals(data)
                 // $(e.target.parentElement.parentElement).remove()
             })
@@ -905,10 +916,22 @@ export function exporationgoals(data) {
             if(text == '') {
                 alert("该内容不能为空！")
             }else {
-                data.push(text)
-                // console.log(data)
-                clearText()
-                appendGoals(data)
+                data.questions.push(text)
+
+                $.ajax({
+                    context: this,
+                    type: 'POST',
+                    crossDomain: true,
+                    url: "http://localhost:5000//addquiz",
+                    data: JSON.stringify(text),
+                    contentType: 'application/json'
+                }).then((res) => {
+                    console.log(res);
+                    data.explanations.push(res)
+
+                    clearText()
+                    appendGoals(data)
+                }) 
             }
         })
     
@@ -918,7 +941,7 @@ export function exporationgoals(data) {
                 type: 'POST',
                 crossDomain: true,
                 url: "http://localhost:5000//updatequiz",
-                data: JSON.stringify(data),
+                data: JSON.stringify(data.questions),
                 contentType: 'application/json'
             }).then((res) => {
                 // 全局记录 questions & explanations
@@ -1054,7 +1077,7 @@ export function exporationgoals(data) {
     // }
 
     function hideAll(idx) {
-        for(var i = 0; i < data.length; i++) {
+        for(var i = 0; i < data.explanations.length; i++) {
             if(i == idx) continue
             $('#goal' + i + ' .explain').hide()
         }
