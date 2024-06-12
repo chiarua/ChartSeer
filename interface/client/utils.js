@@ -714,6 +714,88 @@ export function handleEvents() {
 
         app.sumview.update()
     })
+
+    $("#exportcharts").unbind("click").bind("click", (e) => {
+        if(app.sumview.charts.length == 0) {
+            alert("请先生成图表！")
+            return
+        }
+
+        // 获取模态框主体
+        var modal = $("#myModal");
+        modal.css({
+            "display": "block"
+        })
+        
+        $("#exportallcharts").empty()
+
+        var charttypes = []
+        for(let i = 0; i < app.sumview.charts.length; i++) {
+            charttypes.push(app.sumview.charts[i].originalspec.mark)
+        }
+        charttypes = [...new Set(charttypes)]
+
+        for(let i = 0; i < charttypes.length; i++) { 
+            $("#exportallcharts").append($('<div />', {id: charttypes[i]}))
+            $("#" + charttypes[i]).append("<h5 />")
+            $("#" + charttypes[i] + " h5").text(charttypes[i].charAt(0).toUpperCase() + charttypes[i].slice(1) + " Chart:")
+            $("#" + charttypes[i]).append($('<div />', {id: charttypes[i] + "s"}))
+            
+            $("#" + charttypes[i]).css({
+                "width": "47%"
+            })
+            $("#" + charttypes[i] + 's').css({
+                "height": "331px",
+                "overflow-y": "auto"
+            })
+        }
+
+        app.sumview.charts.forEach((ch) => {
+            if(ch.created == false) {
+                $("#" + ch.originalspec.mark + "s").append($('<div />', {id: 'chartall' + ch.chid}))
+    
+                var vegachart = _.extend({}, ch.originalspec,  
+                    { width: 230, height: 130, autosize: 'fit' }, 
+                    { data: {values: app.data.chartdata.values} },
+                    { config: vegaConfig})
+                $('#chartall' + ch.chid).css({'display': 'flex', 'justify-content': 'space-between','align-items': 'center'})
+                
+                $('#chartall' + ch.chid).append($('<div />', {class: 'chartdiv', id: 'chart' + ch.chid}))
+    
+                $('#chartall' + ch.chid).append($('<div />', {class: 'chartdiv', id: 'chartdesc' + ch.chid}))
+                $('#chartdesc' + ch.chid).append($(`
+                    <h4> What is the relationship between Housepower and Weight_i_lbs? </h3>
+                    <span> What is the relationship between Housepower and Weight_i_lbs?What is the relationship between Housepower and Weight_i_lbs?What is the relationship between Housepower and Weight_i_lbs? </span>
+                `))
+
+                $('#chartdesc' + ch.chid + ' h4').css('margin', '10px 0 5px 0')
+                $('#chartdesc' + ch.chid + ' span').css({'font-size': '14px', 'display': 'block'})
+                $('#chartdesc' + ch.chid + ' div').css({'display': 'flex', 'justify-content': 'space-between', 'margin-top': '10px'})
+                $('#chartdesc' + ch.chid + ' div' + ' button').css({'font-size': '12px', 'margin': '0 2px', 'height': '25px', 'background-color': 'white', 'border-radius': '5px','border': '1px solid rgb(171, 171, 171)'})
+            
+                $('#chart' + ch.chid).append('<div class="chartcontainer"></div>')
+    
+                vegaEmbed('#chart' + ch.chid + ' .chartcontainer', vegachart, {actions: false})
+                
+                $('#chart' + ch.chid).hover((e) => {
+                    $('#chart' + ch.chid).css('border-color', 'crimson')
+                    app.sumview.highlight(ch.chid, true)
+                }, (e) => {
+                    $('#chart' + ch.chid).css('border-color', 'lightgray')
+                    app.sumview.highlight(ch.chid, false)
+                }).click((e) => {
+                    app.sumview.selectedChartID = ch.chid
+                })
+            }
+        })
+
+        // 关闭模态框
+        $("#myModal .close").click(() => {
+            modal.css({
+                "display": "none"
+            })
+        })
+    })
 }
 
 export function exporationgoals(data) {
