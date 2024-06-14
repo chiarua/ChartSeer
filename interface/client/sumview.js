@@ -215,8 +215,8 @@ export default class SumView extends EventEmitter {
                         })
 
                         // show coordinate
-                        $('#xvalue').html(p[0])
-                        $('#yvalue').html(p[1])
+                        $('#xvalue').html(p[0].toFixed(2))
+                        $('#yvalue').html(p[1].toFixed(2))
 
                         this._charts = _.filter(this._charts, (c) => {return !c.created})
                         this.render()

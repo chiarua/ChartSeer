@@ -272,9 +272,9 @@ html, body {
   position: absolute;
   height: 828px;
   // width: 795px;
-  width: 48%;
+  width: 47%;
   // left: 527px;
-  left: 28%;
+  left: 29%;
   right: 520px;
   display: inline-block;
   margin: 0px;
@@ -303,7 +303,7 @@ html, body {
 #panel6 {
   position: absolute;
   // width: 510px;
-  width: 27%;
+  width: 28%;
   // height: 510px;
   left: 0;
   top: 490px;
@@ -393,7 +393,7 @@ html, body {
             }
 
             .numbody {
-              padding: 10px;
+              padding: 20px 10px;
 
               * {
                 touch-action:manipulation
@@ -403,7 +403,7 @@ html, body {
               //   height:30px;
               //   position:relative;
 
-                .minbar {
+                .bar {
                   width:100%;
                   height:12px;
                   border-radius:10px;
@@ -416,11 +416,12 @@ html, body {
                   margin: 30px 0;
                   cursor:pointer;
                 }
-                .minprogress {
+                .progress {
+                  position: relative;
                   width:0;
                   height:12px;
                   border-radius:10px;
-                  background:#409eff;
+                  background:#40a0ff66;
                 }
                 .mindot {
                   width:20px;
@@ -434,33 +435,6 @@ html, body {
                   border-radius:50%;
                   cursor:pointer;
                 }
-              // }
-
-              // #maxrange {
-              //   width:200px;
-              //   height:30px;
-              //   position:relative;
-              //   margin-top: 25px;
-
-                .maxbar {
-                  width:100%;
-                  height:12px;
-                  border-radius:10px;
-                  background:#e4e7ed;
-                  position:absolute;
-                  top:0;
-                  bottom:0;
-                  left:0;
-                  right:0;
-                  margin: 30px 0;
-                  cursor:pointer;
-                }
-                .maxprogress {
-                  width:0;
-                  height:12px;
-                  border-radius:10px;
-                  background:#409eff;
-                }
                 .maxdot {
                   width:20px;
                   height:20px;
@@ -473,7 +447,6 @@ html, body {
                   border-radius:50%;
                   cursor:pointer;
                 }
-              // }
             }
 
             .strbody {
@@ -554,7 +527,7 @@ html, body {
 #panel5 {
   position: absolute;
   // width: 510px;
-  width: 27%;
+  width: 28%;
   height: 510px;
   left: 0;
   display: inline-block;

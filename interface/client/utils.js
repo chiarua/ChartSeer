@@ -33,58 +33,77 @@ export var vegaConfig = {
 
 // 进度条
 function slider(obj, idx, dataname, maximum = 300) { // maximum最大值默认为100
+    if(maximum < 50) maximum = 50
     var range = document.getElementById(obj + idx),
         bar = range.getElementsByTagName("div")[0],
         progress = bar.children[0],
-        dot = bar.children[1],
-        num = range.getElementsByTagName("span")[1];
-    if(obj == "minrange") {
-        bar.className = "minbar";
-        progress.className = "minprogress";
-        dot.className = "mindot";
-        num.className = "minnum";
+        mindot = bar.children[1],
+        maxdot = bar.children[2],
+        minnum = range.getElementsByTagName("span")[1];
+        maxnum = range.getElementsByTagName("span")[3];
+    // if(obj == "minrange") {
+        bar.className = "bar";
+        progress.className = "progress";
+        mindot.className = "mindot";
+        maxdot.className = "maxdot";
+        minnum.className = "minnum";
+        maxnum.className = "maxnum";
 
-        $("#maxrange" + idx + " .maxnum").text(0)
+        $("#range" + idx + " .minnum").text(0)
+        $("#range" + idx + " .maxnum").text(maximum)
         var min = recordfilter[idx][dataname + 'min']
-
-        if(min != 0) {
-            $("#minrange" + idx + " .minnum").text(min)
-
-            progress.style.width = parseFloat(min) / maximum * 200 + 'px'
-            dot.style.left = parseFloat(min) / maximum * 200 - parseFloat(min) / maximum * 20 + 'px'
-        }
-    } else {
-        bar.className = "maxbar";
-        progress.className = "maxprogress";
-        dot.className = "maxdot";
-        num.className = "maxnum";
-
-        progress.style.width = 200 + 'px'
-        dot.style.left = 179 + 'px'
-
-        $("#maxrange" + idx + " .maxnum").text(maximum)
         var max = recordfilter[idx][dataname + 'max']
 
-        if(max != 300) {
-            $("#maxrange" + idx + " .maxnum").text(max)
+        maxdot.style.left = 179 + 'px'
 
-            progress.style.width = parseFloat(max) / maximum * 200 + 'px'
-            dot.style.left = parseFloat(max) / maximum * 200 - parseFloat(max) / maximum * 20 + 'px'
+        if(min != 0) {
+            $("#range" + idx + " .minnum").text(min)
         }
-    }
+        if(max != maximum) {
+            $("#range" + idx + " .maxnum").text(max)
+        }
+        // $("#minrange" + idx + " .minnum").text(min)
+
+        // progress.style.width = parseFloat(min) / maximum * 200 + 'px'
+        mindot.style.left = parseFloat(min) / maximum * 200 - parseFloat(min) / maximum * 20 + 'px'
+        maxdot.style.left = parseFloat(max) / maximum * 200 - parseFloat(max) / maximum * 20 + 'px'
+        // }
+    // } else {
+    //     bar.className = "maxbar";
+    //     progress.className = "maxprogress";
+    //     dot.className = "maxdot";
+    //     num.className = "maxnum";
+
+    //     progress.style.width = 200 + 'px'
+    //     dot.style.left = 179 + 'px'
+
+    //     $("#maxrange" + idx + " .maxnum").text(maximum)
+    //     var max = recordfilter[idx][dataname + 'max']
+
+    //     if(max != 300) {
+    //         $("#maxrange" + idx + " .maxnum").text(max)
+
+            // progress.style.width = parseFloat(max) / maximum * 200 + 'px'
+    //         dot.style.left = parseFloat(max) / maximum * 200 - parseFloat(max) / maximum * 20 + 'px'
+    //     }
+    // }
 
     /*
      * offsetWidth 获取当前节点的宽度 （width + border + padding）
      **/
     // 总长度减去原点覆盖的部分
-    var rest = bar.offsetWidth - dot.offsetWidth;
+    var rest = bar.offsetWidth - mindot.offsetWidth;
+    // var rest = maxdot.offsetWidth - mindot.offsetWidth;
+
+    progress.style.width = maxdot.offsetLeft - mindot.offsetLeft + "px";
+    progress.style.left = mindot.offsetWidth / 2 + "px";
  
     // 鼠标按下事件
-    dot.onmousedown = function(ev) {
+    mindot.onmousedown = function(ev) {
         /*
             * offsetLeft 获取的是相对于父对象的左边距, 返回的是数值， 没有单位
             */
-        let dotL = dot.offsetLeft;
+        let dotL = mindot.offsetLeft;
         let e = ev || window.event; //兼容性
         /*
             * clientX 事件属性返回当事件被触发时鼠标指针向对于浏览器页面（或客户区）的水平坐标。
@@ -104,11 +123,50 @@ function slider(obj, idx, dataname, maximum = 300) { // maximum最大值默认�
                 newL = rest;
             }
             // 改变left值
-            dot.style.left = newL + 'px';
+            mindot.style.left = newL + 'px';
             // 计算比例
             let bili = newL / rest * maximum;
-            num.innerHTML = Math.ceil(bili);
-            progress.style.width = bar.offsetWidth * Math.ceil(bili) / maximum + 'px';
+            minnum.innerHTML = Math.ceil(bili);
+            progress.style.width = maxdot.offsetLeft - bar.offsetWidth * Math.ceil(bili) / maximum + maxdot.offsetWidth / 2 + 'px';
+            progress.style.left = mindot.offsetLeft + mindot.offsetWidth / 2 + "px";
+            return false; //取消默认事件
+        }
+        window.onmouseup = function() {
+            window.onmousemove = false; //解绑移动事件
+            return false;
+        }
+        return false;
+    };
+    maxdot.onmousedown = function(ev) {
+        /*
+            * offsetLeft 获取的是相对于父对象的左边距, 返回的是数值， 没有单位
+            */
+        let dotL = maxdot.offsetLeft;
+        let e = ev || window.event; //兼容性
+        /*
+            * clientX 事件属性返回当事件被触发时鼠标指针向对于浏览器页面（或客户区）的水平坐标。
+            */
+        let mouseX = e.clientX //鼠标按下的位置
+        window.onmousemove = function(ev) {
+            let e = ev || window.event;
+            // 浏览器当前位置减去鼠标按下的位置
+            let moveL = e.clientX - mouseX; //鼠标移动的距离
+            // 保存newL是必要的    
+            let newL = dotL + moveL; //left值
+            // 判断最大值和最小值
+            if (newL < 0) {
+                newL = 0;
+            }
+            if (newL >= rest) {
+                newL = rest;
+            }
+            // 改变left值
+            maxdot.style.left = newL + 'px';
+            // 计算比例
+            let bili = newL / rest * maximum;
+            maxnum.innerHTML = Math.ceil(bili);
+            progress.style.width = bar.offsetWidth * Math.ceil(bili) / maximum - mindot.offsetLeft - mindot.offsetWidth / 2 + 'px';
+            progress.style.left = mindot.offsetLeft + maxdot.offsetWidth / 2 + "px";
             return false; //取消默认事件
         }
         window.onmouseup = function() {
@@ -118,20 +176,20 @@ function slider(obj, idx, dataname, maximum = 300) { // maximum最大值默认�
         return false;
     };
     // 点击进度条
-    bar.onclick = function(ev) {
-        let left = ev.clientX - range.offsetLeft - dot.offsetWidth / 2;
-        if (left < 0) {
-            left = 0;
-        }
-        if (left >= rest) {
-            left = rest;
-        }
-        dot.style.left = left + 'px';
-        let bili = left / rest * maximum;
-        num.innerHTML = Math.ceil(bili);
-        progress.style.width = bar.offsetWidth * Math.ceil(bili) / maximum + 'px';
-        return false;
-    }
+    // bar.onclick = function(ev) {
+    //     let left = ev.clientX - range.offsetLeft - dot.offsetWidth / 2;
+    //     if (left < 0) {
+    //         left = 0;
+    //     }
+    //     if (left >= rest) {
+    //         left = rest;
+    //     }
+    //     dot.style.left = left + 'px';
+    //     let bili = left / rest * maximum;
+    //     num.innerHTML = Math.ceil(bili);
+    //     progress.style.width = bar.offsetWidth * Math.ceil(bili) / maximum + 'px';
+    //     return false;
+    // }
 }
 
 // 获取最大值和最小值 to do
@@ -256,43 +314,47 @@ export function createDataTable(scrollH, ifone) {
                         </div>
                         `)
                     
-                    $("#numfilter" + i + ' .numbody').append($('<div />', {id: 'minrange' + i}))
-                    $("#numfilter" + i + ' .numbody').append($('<div />', {id: 'maxrange' + i}))
+                    $("#numfilter" + i + ' .numbody').append($('<div />', {id: 'range' + i}))
+                    // $("#numfilter" + i + ' .numbody').append($('<div />', {id: 'maxrange' + i}))
     
                     $("#numfilter" + i + ' .numfooter').append(`
                         <button class="conformfilter"> Conform </button>
                         `)
     
-                    $("#minrange" + i).css({
+                    $("#range" + i).css({
                         "width":"200px",
                         "height":"30px",
                         "position":"relative"
                     })
     
-                    $("#maxrange" + i).css({
-                        "width":"200px",
-                        "height":"30px",
-                        "position":"relative",
-                        "margin-top": "25px"
-                    })
+                    // $("#maxrange" + i).css({
+                    //     "width":"200px",
+                    //     "height":"30px",
+                    //     "position":"relative",
+                    //     "margin-top": "25px"
+                    // })
     
-                    $("#minrange" + i).append(`
+                    $("#range" + i).append(`
                             <span>Min:</span> <span id="minnum">0</span>
-                            <div class="minbar">
-                                <div class="minprogress"></div>
+                            <span>Max:</span> <span id="maxnum">300</span>
+                            <div class="bar">
+                                <div class="progress"></div>
                                 <div class="mindot"></div>
+                                <div class="maxdot"></div>
                             </div>
                         `)
-                    $("#maxrange" + i).append(`
-                        <span>Max:</span> <span id="maxnum">300</span>
-                        <div class="maxbar">
-                            <div class="maxprogress"></div>
-                            <div class="maxdot"></div>
-                        </div>
-                    `)
+                        // <div class="minprogress"></div>
+
+                    // $("#maxrange" + i).append(`
+                    //     <span>Max:</span> <span id="maxnum">300</span>
+                    //     <div class="maxbar">
+                    //         <div class="maxprogress"></div>
+                    //         <div class="maxdot"></div>
+                    //     </div>
+                    // `)
     
-                    slider("minrange", i, dataname, Math.ceil(maximum))
-                    slider("maxrange", i, dataname, Math.ceil(maximum))
+                    slider("range", i, dataname, Math.ceil(maximum))
+                    // slider("maxrange", i, dataname, Math.ceil(maximum))
     
                     $("#numfilter"+ i +" .numheader .title").text(columnname)
                     $("#numfilter"+ i +" .numheader .cancel").css({
@@ -705,11 +767,16 @@ export function handleEvents() {
             app.data.questions.push(app.sumview.clientidea)
             app.data.explanations.push(explanation)
 
+            // app.data.len.push(app.sumview.data.charts)
+
             app.chartview.emit('add-chart', refine_chart.originalspec)
         }
     })
 
     $("#reset").unbind("click").bind("click", (e) => {
+        if(app.sumview.charts.length > app.sumview.data.chartspecs) {
+            $("#rollback").onclick()
+        }
         if(app.data.chartspecs.length == 0) {
             alert("请先生成图表！")
             return
@@ -718,9 +785,13 @@ export function handleEvents() {
             alert("已是最初推荐图表！")
             return
         }
+
+        for(let i = initchartslength - 1; i < app.data.chartspecs.lengthl; i++) {
+            app.data.explanations.pop()
+            app.data.questions.pop()
+        }
+            
         app.data.chartspecs.splice(initchartslength, app.data.chartspecs.length - initchartslength)
-        app.data.explanations.splice(initchartslength, app.data.chartspecs.length - initchartslength)
-        app.data.questions.splice(initchartslength, app.data.chartspecs.length - initchartslength)
 
         app.sumview.update()
     })
@@ -805,6 +876,25 @@ export function handleEvents() {
                 "display": "none"
             })
         })
+    })
+
+    $("#rollback").unbind("click").bind("click", (e) => {
+        // let len = app.data.len.length
+        let len = app.sumview.data.chartspecs.length
+        if(app.sumview.charts.length > len) {
+            // app.sumview.data.chartspecs.splice(len, app.sumview.charts.length - len)
+            app.data.explanations.splice(len, app.sumview.charts.length - len)
+            app.data.questions.splice(len, app.sumview.charts.length - len)
+            app.sumview.update()
+        }
+        // if(app.data.len[len - 1] > app.data.len[len - 2]) {
+        console.log(initchartslength);
+        if(len > initchartslength) {
+            app.data.chartspecs.pop()
+            app.data.explanations.pop()
+            app.data.questions.pop()
+            app.sumview.update()
+        }
     })
 }
 
@@ -1144,6 +1234,8 @@ export function updateData(data, name, ifone) {
 
     app.data.questions = data.questions
     app.data.explanations = data.explanations
+    // app.data.len = []
+    // app.data.len.push(initchartslength)
 
     app.sumview = new SumView(d3.select('#sumview'), app.data, {
         backend: 'http://localhost:5000',
