@@ -756,6 +756,10 @@ export function handleEvents() {
     })
 
     $("#addchart").unbind("click").bind("click", (e) => {
+        $("#dingwei").css({
+            'visibility': 'hidden'
+        })
+
         if(app.sumview.data.chartspecs[app.sumview.selectedChartID]) {
             alert("该图表已存在！")
         } else {
@@ -774,8 +778,9 @@ export function handleEvents() {
     })
 
     $("#reset").unbind("click").bind("click", (e) => {
-        if(app.sumview.charts.length > app.sumview.data.chartspecs) {
-            $("#rollback").onclick()
+        if(app.sumview.charts.length > app.sumview.data.chartspecs.length) {
+            alert("请先RALLBACK!")
+            return
         }
         if(app.data.chartspecs.length == 0) {
             alert("请先生成图表！")
@@ -881,6 +886,10 @@ export function handleEvents() {
     $("#rollback").unbind("click").bind("click", (e) => {
         // let len = app.data.len.length
         let len = app.sumview.data.chartspecs.length
+        if(app.sumview.charts.length == len && len == initchartslength) {
+            alert("无需ROLLBACK！")
+            return
+        }
         if(app.sumview.charts.length > len) {
             // app.sumview.data.chartspecs.splice(len, app.sumview.charts.length - len)
             app.data.explanations.splice(len, app.sumview.charts.length - len)
@@ -888,7 +897,7 @@ export function handleEvents() {
             app.sumview.update()
         }
         // if(app.data.len[len - 1] > app.data.len[len - 2]) {
-        console.log(initchartslength);
+        // console.log(initchartslength);
         if(len > initchartslength) {
             app.data.chartspecs.pop()
             app.data.explanations.pop()
