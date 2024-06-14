@@ -97,7 +97,7 @@ class FileUploadProcessor:
         :param user_instr: user command
         :return: dict {“explanations”:[], “codes”:[]}
         """
-        instr = "Here is the chart:" + design_attr + " Here is the description of the dataset:" + self.dataset_preview + " here is the description of the data attributes: " + str(
+        instr = "Here is the chart:" + design_attr + " Here is the description of the dataset:" + self.dataset_preview + " here is the description of the data attributes(fields): " + str(
             self.field_preview) + " and this is what the user wants the chart to explain: " + user_instr
 
         generator = TextGen.TextGenerator()
@@ -110,7 +110,7 @@ class FileUploadProcessor:
         :return: the description
         """
         if self.question_expls.get(quiz) is None:
-            instr = "Here is the question:" + quiz + " here is the description of the data attributes: " + str(
+            instr = "Here is the question:" + quiz + " here is the description of the data attributes(fields): " + str(
                 self.field_preview)
 
             generator = TextGen.TextGenerator()
