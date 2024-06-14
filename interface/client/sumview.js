@@ -57,6 +57,8 @@ export default class SumView extends EventEmitter {
         this._varclr = d3.scaleOrdinal(['#F3C300', '#875692', '#F38400', '#A1CAF1', '#BE0032', '#C2B280', '#848482', '#008856', '#E68FAC', '#0067A5', '#F99379', '#604E97', '#F6A600', '#B3446C', '#DCD300', '#882D17', '#8DB600', '#654522', '#E25822', '#2B3D26'])
         this._usrclr = d3.scaleOrdinal(d3.schemeGreys[5]).domain([0, 1, 2, 3, 4])
 
+        this._color = ['#F3C300', '#875692', '#F38400', '#A1CAF1', '#BE0032', '#C2B280', '#848482', '#008856', '#E68FAC', '#0067A5', '#F99379', '#604E97', '#F6A600', '#B3446C', '#DCD300', '#882D17', '#8DB600', '#654522', '#E25822', '#2B3D26']
+
         this._init()
     }
 
@@ -116,7 +118,9 @@ export default class SumView extends EventEmitter {
             .attr('width', this.conf.size[0])
             .attr('height', this.conf.size[1])
         this._svgDrawing = this.svg.append('g')
-            .attr('translate', 'transform(' + this.conf.margin + ',' + this.conf.margin + ')')
+            .attr('transform', 'translate(' + this.conf.margin + ',' + this.conf.margin + ')')  // up ?: transform和translate位置原来反了吧？
+            .attr('style', 'transition: transform 0.5s ease;')  // up 增加移动动画
+            // .attr('translate', 'transform(' + this.conf.margin + ',' + this.conf.margin + ')')
 
         // this._svgDrawing.append('defs')
         //     .append('filter').attr('id', 'image')
@@ -155,16 +159,16 @@ export default class SumView extends EventEmitter {
             $("#miaozhun").css('visibility', 'hidden')
         })
 
-        $("#sumview").on('mouseover', () => {
+        // $("#sumview").on('mouseover', () => {
 
-            $("#sumview").css('visibility', 'visible')
-        }).on('mousemove', () => {
+        //     $("#sumview").css('visibility', 'visible')
+        // }).on('mousemove', () => {
 
-            $("#sumview").css('visibility', 'visible')
-        }).on('mousemout', () => {
+        //     $("#sumview").css('visibility', 'visible')
+        // }).on('mousemout', () => {
 
-            $("#sumview").css('visibility', 'hidden')
-        })
+        //     $("#sumview").css('visibility', 'hidden')
+        // })
 
         this._svgDrawing.append('rect')
             .attr('class', 'background')
@@ -208,9 +212,14 @@ export default class SumView extends EventEmitter {
                     if(this.clientidea == "") {
                         alert("请先输入意图！")
                     }else {
+
+                        let outerTransform = this._svgDrawing.attr("transform");
+                        let outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
+                        let outerX = +outerTranslate[1];
+                        let outerY = +outerTranslate[2];
                         $("#dingwei").css({
-                            'left': p[0] - 20 + 'px',
-                            'top': p[1] - 30 + 'px',
+                            'left': p[0] + outerX - 20 + 'px',
+                            'top': p[1] + outerY - 30 + 'px',
                             'visibility': 'visible'
                         })
 
@@ -239,9 +248,16 @@ export default class SumView extends EventEmitter {
                 var p = d3.mouse(this._svgDrawing.node())
                 this._svgDrawing.select('.cursorc').attr('cx', p[0]).attr('cy', p[1])
 
+                let outerTransform = this._svgDrawing.attr("transform");
+                let outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
+                let outerX = +outerTranslate[1];
+                let outerY = +outerTranslate[2];
+
                 $("#miaozhun").css({
-                    'left': p[0] - 15 + 'px',
-                    'top': p[1] - 15 + 'px'
+                    // 'left': p[0] - 15 + 'px',
+                    // 'top': p[1] - 15 + 'px'
+                    'left': p[0] + outerX - 15 + 'px',
+                    'top': p[1] + outerY - 15 + 'px'
                 })
 
                 // show coordinate
@@ -308,39 +324,47 @@ export default class SumView extends EventEmitter {
                 .remove()
 
             // draw text
-            var texts = this._svgDrawing.select('.textlayer')
-                .selectAll('.backtext')
-                .data(this._variableSets)
+            // var texts = this._svgDrawing.select('.textlayer')
+            //     .selectAll('.backtext')
+            //     .data(this._variableSets)
 
-            texts.enter()
-                .append('text')
-                .attr('class', 'backtext')
-                .attr('x', (d) => {return this._xscale(d.loc[0]) + _.random(-20, 20) })
-                .attr('y', (d) => {return this._yscale(d.loc[1]) + _.random(-20, 20) })
-                .style('font-size', (d) => {return 8 + d.count * 2})
-                .style('fill', (d) => {return this._varclr(d.text)})
-                .text((d) => {return d.text})
-                .style('opacity', 0)
-                .transition()
-                .duration(1000)
-                .style('opacity', 1)
+            // texts.enter()
+            //     .append('text')
+            //     .attr('class', 'backtext')
+            //     .attr('x', (d) => {return this._xscale(d.loc[0]) + _.random(-20, 20) })
+            //     .attr('y', (d) => {return this._yscale(d.loc[1]) + _.random(-20, 20) })
+            //     .style('font-size', (d) => {return 8 + d.count * 2})
+            //     .style('fill', (d) => {return this._varclr(d.text)})
+            //     .text((d) => {return d.text})
+            //     .style('opacity', 0)
+            //     .transition()
+            //     .duration(1000)
+            //     .style('opacity', 1)
 
-            texts.style('opacity', 0)
-                .attr('x', (d) => {return this._xscale(d.loc[0]) + _.random(-20, 20) })
-                .attr('y', (d) => {return this._yscale(d.loc[1]) + _.random(-20, 20) })
-                .style('font-size', (d) => {return 8 + d.count * 2})
-                .style('fill', (d) => {return this._varclr(d.text)})
-                .text((d) => {return d.text})
-                .transition()
-                .duration(1000)
-                .style('opacity', 1)
+            // texts.style('opacity', 0)
+            //     .attr('x', (d) => {return this._xscale(d.loc[0]) + _.random(-20, 20) })
+            //     .attr('y', (d) => {return this._yscale(d.loc[1]) + _.random(-20, 20) })
+            //     .style('font-size', (d) => {return 8 + d.count * 2})
+            //     .style('fill', (d) => {return this._varclr(d.text)})
+            //     .text((d) => {return d.text})
+            //     .transition()
+            //     .duration(1000)
+            //     .style('opacity', 1)
 
-            texts.exit().remove()
+            // texts.exit().remove()
         }
         // draw charts
         var charts = this._svgDrawing.select('.chartlayer')
             .selectAll('.chartdot')
             .data(this._charts, (d) => { return d.chid })
+
+        // up：每次渲染只获取1次
+        // 获取 SVG 的中心位置
+        const svgWidth = parseFloat(this.svg.attr('width'));
+        const svgHeight = parseFloat(this.svg.attr('height'));
+        const centerX = svgWidth / 2;
+        const centerY = svgHeight / 2;
+        // console.log('centerX, centerY', centerX, centerY)
 
         // enter
         var chartsenter = charts.enter()
@@ -359,6 +383,79 @@ export default class SumView extends EventEmitter {
                 //     .classed('selected', true) 
                 // this.emit('clickchart', d) 
             })
+            .on('dblclick', (d) => {    // up 增加双击事件
+                this.selectedChartID = d.chid
+                // 获取被点击的 chartdot 元素
+                // const chartdot = d3.select(event.currentTarget);
+                const chartdot = this._svgDrawing.selectAll('.chartdot')
+                    .filter((c) => {return c.chid == d.chid})
+                // console.log('元素', chartdot)
+
+                // 获取元素的 transform 属性
+                const transform = chartdot.attr('transform');
+                // console.log('Transform:', transform);
+                // 提取translateX，Y
+                const translate = /translate\(([^,]+),\s*([^)]+)\)/.exec(transform);
+                // console.log(translate);
+                const dotX = +translate[1];
+                const dotY = +translate[2];
+
+                // 获取当前 组合layer 的变换位置
+                // const outerGroup = d3.select("#outerGroup");
+                const outerTransform = this._svgDrawing.attr("transform");
+                const outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
+                const outerX = +outerTranslate[1];
+                const outerY = +outerTranslate[2];
+
+                // 计算需要平移的距离
+                const deltaX = centerX - (outerX + dotX);
+                const deltaY = centerY - (outerY + dotY);
+                // 更新 组合layer 的变换位置
+                this._svgDrawing.attr('transform', `translate(${outerX + deltaX}, ${outerY + deltaY})`)
+            
+                // 生成推荐图表
+                if(this.data.chartspecs.length < this._charts.length) {
+                    alert("!请先添加该图表！")
+                    return
+                } else {
+                    var p = d3.mouse(this._svgDrawing.node())
+                    this._charts = _.filter(this._charts, (c) => {return !c.created})
+                    this.render()
+                    this._recommendCharts(p)
+                } 
+            })
+            .on('dragstart', (d) => { 
+                console.log("???");
+                this.selectedChartID = d.chid
+                // 获取被点击的 chartdot 元素
+                // const chartdot = d3.select(event.currentTarget);
+                const chartdot = this._svgDrawing.selectAll('.chartdot')
+                    .filter((c) => {return c.chid == d.chid})
+                // console.log('元素', chartdot)
+
+                // 获取元素的 transform 属性
+                const transform = chartdot.attr('transform');
+                // console.log('Transform:', transform);
+                // 提取translateX，Y
+                const translate = /translate\(([^,]+),\s*([^)]+)\)/.exec(transform);
+                // console.log(translate);
+                const dotX = +translate[1];
+                const dotY = +translate[2];
+
+                // 获取当前 组合layer 的变换位置
+                // const outerGroup = d3.select("#outerGroup");
+                const outerTransform = this._svgDrawing.attr("transform");
+                const outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
+                console.log(outerTranslate);
+                const outerX = +outerTranslate[1];
+                const outerY = +outerTranslate[2];
+
+                // 计算需要平移的距离
+                const deltaX = centerX - (outerX + dotX);
+                const deltaY = centerY - (outerY + dotY);
+                // 更新 组合layer 的变换位置
+                this._svgDrawing.attr('transform', `translate(${outerX + deltaX}, ${outerY + deltaY})`)
+            })
             .on('mouseover', (d) => {
                 this.highlight(d.chid, true)
                 this.emit('mouseoverchart', d)
@@ -375,32 +472,33 @@ export default class SumView extends EventEmitter {
         chartsenter.append('circle')
             .attr('r', this._params.dotr)
             .attr('cx', 0)
-            .attr('cy', 0)      
+            .attr('cy', 0)     
+            .style('fill', (d) => { return this.getcolor(d.originalspec.mark) }) 
 
-        chartsenter.append('text')
-            .attr('class', 'marktext')
-            .attr('x', 0)
-            .attr('y', 0)
-            .text((d) => {return d.originalspec.mark.substring(0,1).toUpperCase()})
+        // chartsenter.append('text')
+        //     .attr('class', 'marktext')
+        //     .attr('x', 0)
+        //     .attr('y', 0)
+        //     .text((d) => {return d.originalspec.mark.substring(0,1).toUpperCase()})
 
-        chartsenter.append('rect')
-            .attr('x', this._params.dotr - 5)
-            .attr('y', this._params.dotr - 5)
-            .attr('width', 10)
-            .attr('height', 10)
+        // chartsenter.append('rect')
+        //     .attr('x', this._params.dotr - 5)
+        //     .attr('y', this._params.dotr - 5)
+        //     .attr('width', 10)
+        //     .attr('height', 10)
             
-        chartsenter.append('text')
-            .attr('class', 'uidtext')
-            .attr('x', this._params.dotr)
-            .attr('y', this._params.dotr)
-            .text((d) => { return d.created ? 'x' : d.uid })
+        // chartsenter.append('text')
+        //     .attr('class', 'uidtext')
+        //     .attr('x', this._params.dotr)
+        //     .attr('y', this._params.dotr)
+        //     .text((d) => { return d.created ? 'x' : d.uid })
         
-        var arcs = chartsenter.selectAll('path')
-            .data((d) => { return this._pie(d.vars.map((v) => {return {name: v, value: 1.0}})) })
-        arcs.enter()
-            .append('path')
-            .attr('d', this._arc)
-            .style('fill', (d) => { return this._varclr(d.data.name) })
+        // var arcs = chartsenter.selectAll('path')
+        //     .data((d) => { return this._pie(d.vars.map((v) => {return {name: v, value: 1.0}})) })
+        // arcs.enter()
+        //     .append('path')
+        //     .attr('d', this._arc)
+        //     .style('fill', (d) => { return this._varclr(d.data.name) })
         
         chartsenter.style('opacity', 0)
             .transition()
@@ -420,19 +518,35 @@ export default class SumView extends EventEmitter {
         chartsenter.select('.uidtext')
             .text((d) => { return d.created ? 'x' : d.uid })
         
-        arcs = charts.selectAll('path')
-            .data((d) => { return this._pie(d.vars.map((v) => {return {name: v, value: 1.0}})) })
-        arcs.enter()
-            .append('path')
-            .attr('d', this._arc)
-            .style('fill', (d) => { return this._varclr(d.data.name) })
-        arcs.attr('d', this._arc)
-            .style('fill', (d) => { return this._varclr(d.data.name) })
-        arcs.exit().remove()
+        // arcs = charts.selectAll('path')
+        //     .data((d) => { return this._pie(d.vars.map((v) => {return {name: v, value: 1.0}})) })
+        // arcs.enter()
+        //     .append('path')
+        //     .attr('d', this._arc)
+        //     .style('fill', (d) => { return this._varclr(d.data.name) })
+        // arcs.attr('d', this._arc)
+        //     .style('fill', (d) => { return this._varclr(d.data.name) })
+        // arcs.exit().remove()
         
         // exit
         charts.exit()
             .remove()
+    }
+
+    getcolor(mark) {
+        let markarr = []
+
+        if(this._charts == 0) {
+            for(let i = 0; i < this.data.chartspecs.length; i++) {
+                markarr.push(this.data.chartspecs[i].mark)
+            }
+        } else {
+            for(let i = 0; i < this._charts.length; i++) {
+                markarr.push(this._charts[i].originalspec.mark)
+            }
+        }
+
+        return this._color[[...new Set(markarr)].indexOf(mark)]
     }
 
     highlight(chid, hoverin) {

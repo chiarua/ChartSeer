@@ -689,7 +689,8 @@ export function handleEvents() {
 
         const formData = new FormData();
         formData.append('file', file)
-        // console.log(formData.get('file'));
+
+        // to do svc文件读取
 
         var reader = new FileReader();
         reader.readAsText(this.files[0]);
