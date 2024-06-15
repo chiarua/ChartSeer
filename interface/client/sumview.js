@@ -320,7 +320,7 @@ export default class SumView extends EventEmitter {
         const svgHeight = parseFloat(this.svg.attr('height'));
         const centerX = svgWidth / 2;
         const centerY = svgHeight / 2;
-        console.log('centerX, centerY', centerX, centerY)
+        // console.log('centerX, centerY', centerX, centerY)
 
         // enter
         var chartsenter = charts.enter()
@@ -362,7 +362,7 @@ export default class SumView extends EventEmitter {
 
                 // 获取元素的 transform 属性
                 const transform = chartdot.attr('transform');
-                console.log('Transform:', transform);
+                // console.log('Transform:', transform);
                 // 提取translateX，Y
                 const translate = /translate\(([^,]+),\s*([^)]+)\)/.exec(transform);
                 const dotX = +translate[1];
@@ -378,8 +378,19 @@ export default class SumView extends EventEmitter {
                 // 计算需要平移的距离
                 const deltaX = centerX - (outerX + dotX);
                 const deltaY = centerY - (outerY + dotY);
+
                 // 更新 组合layer 的变换位置
                 this._svgDrawing.attr('transform', `translate(${outerX + deltaX}, ${outerY + deltaY})`)
+            
+                // 最外层g是变大了
+                if(this._svgDrawing.select(".falsecircle"))
+                    this._svgDrawing.select(".falsecircle").remove()
+                this._svgDrawing.append("circle")
+                    .attr("fill", "black")
+                    .attr("r", "10")
+                    .attr("cx", (outerX + deltaX) < 0 ? svgWidth - (outerX + deltaX) : - (outerX + deltaX))
+                    .attr("cy", (outerY + deltaY) < 0 ? svgHeight - (outerY + deltaY) : -(outerY + deltaY))
+                    .attr("class", "falsecircle")
             })
             .on('mouseover', (d) => {
                 this.highlight(d.chid, true)
@@ -685,22 +696,22 @@ export default class SumView extends EventEmitter {
         return distances
     }
 
-        _chartDistance(chart1, chart2) {//加权距离公式,α
-            var endist = 0
-            // console.log(chart1.embedding.length);
-            for(var z = 0; z < chart1.embedding.length; z++) {
-                var d = chart1.embedding[z] - chart2.embedding[z]
-                endist += d * d
-            }
-            endist = Math.sqrt(endist)
-            // variable distance - Jaccard
-            var vardist = 1 - _.intersection(chart1.vars, chart2.vars).length / 
-            _.union(chart1.vars, chart2.vars).length
-            // variable distance - Cosine
-            // var vardist = _.intersection(charts[i].vars, charts[j].vars).length / this.data.chartdata.attributes.length
-
-            return this._params.distw * endist + (1 - this._params.distw) * vardist 
+    _chartDistance(chart1, chart2) {//加权距离公式,α
+        var endist = 0
+        // console.log(chart1.embedding.length);
+        for(var z = 0; z < chart1.embedding.length; z++) {
+            var d = chart1.embedding[z] - chart2.embedding[z]
+            endist += d * d
         }
+        endist = Math.sqrt(endist)
+        // variable distance - Jaccard
+        var vardist = 1 - _.intersection(chart1.vars, chart2.vars).length / 
+        _.union(chart1.vars, chart2.vars).length
+        // variable distance - Cosine
+        // var vardist = _.intersection(charts[i].vars, charts[j].vars).length / this.data.chartdata.attributes.length
+
+        return this._params.distw * endist + (1 - this._params.distw) * vardist 
+    }
 
     _alignCoordinates() {
         var chids1 = this._prevcharts.map((ch) => {return ch.chid})
