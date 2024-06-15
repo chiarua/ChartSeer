@@ -689,7 +689,8 @@ export function handleEvents() {
 
         const formData = new FormData();
         formData.append('file', file)
-        // console.log(formData.get('file'));
+
+        // to do svc文件读取
 
         var reader = new FileReader();
         reader.readAsText(this.files[0]);
@@ -778,6 +779,10 @@ export function handleEvents() {
     })
 
     $("#reset").unbind("click").bind("click", (e) => {
+        app.sumview._svgDrawing
+            .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
+            .attr('style', 'transition: transform 0.5s ease;')
+
         if(app.sumview.charts.length > app.sumview.data.chartspecs.length) {
             alert("请先RALLBACK!")
             return

@@ -817,21 +817,20 @@ html, body {
   cursor: none;
 
   #miaozhun {
-    position: absolute;
-    width: 30px;
+    // position: absolute;
     visibility: hidden;
-    left: 0;
-    top: 0;
+    // left: 0;
+    // top: 0;
     cursor: none;
     pointer-events: none;
   }
 
   #dingwei {
-    position: absolute;
-    width: 40px;
+    // position: absolute;
+    // width: 40px;
     visibility: hidden;
-    left: 0;
-    top: 0;
+    // left: 0;
+    // top: 0;
     pointer-events: none;
   }
 }
