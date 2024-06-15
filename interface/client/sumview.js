@@ -118,57 +118,37 @@ export default class SumView extends EventEmitter {
             .attr('width', this.conf.size[0])
             .attr('height', this.conf.size[1])
         this._svgDrawing = this.svg.append('g')
-            .attr('transform', 'translate(' + this.conf.margin + ',' + this.conf.margin + ')')  // up ?: transform和translate位置原来反了吧？
+            .attr('transform', 'translate(' + 0 + ',' + 0 + ')')  // up ?: transform和translate位置原来反了吧？
             .attr('style', 'transition: transform 0.5s ease;')  // up 增加移动动画
+            // .attr('transform', 'translate(' + this.conf.margin + ',' + this.conf.margin + ')')  // up ?: transform和translate位置原来反了吧？
             // .attr('translate', 'transform(' + this.conf.margin + ',' + this.conf.margin + ')')
 
-        // this._svgDrawing.append('defs')
-        //     .append('filter').attr('id', 'image')
-        //     .append('feImage').attr('href', './images/miaozhun.png')
+        const imghref = require("./assets/images/miaozhun.png") 
+        const imghref2 = require("./assets/images/dingwei.png") 
+        this._svgDrawing.append('image')
+        .attr('href', imghref)
+        .attr('width', '40')
+        .attr('height', '40')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('id', 'miaozhun')
+
+        this._svgDrawing.append('image')
+        .attr('href', imghref2)
+        .attr('width', '60')
+        .attr('height', '60')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('id', 'dingwei')
 
         this._svgDrawing.append('g')
             .attr('class', 'bubblelayer')
         this._svgDrawing.append('g')
             .attr('class', 'textlayer')
-        this._svgDrawing.append('circle')
-            .attr('class', 'cursorc')
-            .attr('r', this.conf.size[0] * this._params.recradius)
-            .style('visibility', 'hidden')
-
-        // this._svgDrawing.append('path')
-        //     .attr('d', 'M521.37 840.5c-182.82 0-331.54-148.72-331.54-331.54s148.72-331.54 331.54-331.54 331.54 148.72 331.54 331.54S704.19 840.5 521.37 840.5z m0-612.08c-154.69 0-280.54 125.85-280.54 280.54S366.68 789.5 521.37 789.5s280.54-125.85 280.54-280.54-125.85-280.54-280.54-280.54z')
-        //     .attr('fill', '#424244')
-        //     .attr('stroke-width', '5')
-        // this._svgDrawing.append('path')
-        //     .attr('d', 'M709.88 494.88h255.03v51.01H709.88zM57.75 494.88h255.03v51.01H57.75zM495.87 314.563V59.533h51.01v255.03zM495.878 964.067v-255.03h51.01v255.03z')
-        //     .attr('fill', '#424244')
-        // this._svgDrawing.append('path')
-        //     .attr('d', 'M521.38 520.38m-59.48 0a59.48 59.48 0 1 0 118.96 0 59.48 59.48 0 1 0-118.96 0Z')
-        //     .attr('fill', '#424244')
-
-        $("#miaozhun").on('mouseover', () => {
-            // this._svgDrawing.select('.cursorc').style('visibility', 'hidden')
-
-            $("#miaozhun").css('visibility', 'visible')
-        }).on('mousemove', () => {
-            // this._svgDrawing.select('.cursorc').style('visibility', 'hidden')
-
-            $("#miaozhun").css('visibility', 'visible')
-        }).on('mousemout', () => {
-
-            $("#miaozhun").css('visibility', 'hidden')
-        })
-
-        // $("#sumview").on('mouseover', () => {
-
-        //     $("#sumview").css('visibility', 'visible')
-        // }).on('mousemove', () => {
-
-        //     $("#sumview").css('visibility', 'visible')
-        // }).on('mousemout', () => {
-
-        //     $("#sumview").css('visibility', 'hidden')
-        // })
+        // this._svgDrawing.append('circle')
+        //     .attr('class', 'cursorc')
+        //     .attr('r', this.conf.size[0] * this._params.recradius)
+        //     .style('visibility', 'hidden')
 
         this._svgDrawing.append('rect')
             .attr('class', 'background')
@@ -180,11 +160,7 @@ export default class SumView extends EventEmitter {
                 // 取消上次延时未执行的方法
                 clearTimeout(clickTimeId);
 
-                $("#dingwei").css({
-                    // 'left': p[0] - 20 + 'px',
-                    // 'top': p[1] - 30 + 'px',
-                    'visibility': 'hidden'
-                })
+                this._svgDrawing.select('#dingwei').style('visibility', 'hidden')
 
                 this.clientidea = ""
 
@@ -212,16 +188,10 @@ export default class SumView extends EventEmitter {
                     if(this.clientidea == "") {
                         alert("请先输入意图！")
                     }else {
-
-                        let outerTransform = this._svgDrawing.attr("transform");
-                        let outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
-                        let outerX = +outerTranslate[1];
-                        let outerY = +outerTranslate[2];
-                        $("#dingwei").css({
-                            'left': p[0] + outerX - 20 + 'px',
-                            'top': p[1] + outerY - 30 + 'px',
-                            'visibility': 'visible'
-                        })
+                        this._svgDrawing.select('#dingwei')
+                            .style('visibility', 'visible')
+                            .attr('x', p[0] - 30)
+                            .attr('y', p[1] - 30)
 
                         // show coordinate
                         $('#xvalue').html(p[0].toFixed(2))
@@ -231,39 +201,25 @@ export default class SumView extends EventEmitter {
                         this.render()
                         this._recommendCharts(p)
                     }
-
                 }, 200)
             })
             .on('mouseover', () => {
                 // this._svgDrawing.select('.cursorc').style('visibility', 'visible')
-
-                $("#miaozhun").css('visibility', 'visible')
+                this._svgDrawing.select('#miaozhun').style('visibility', 'visible')
             })
             .on('mouseout', () => {
                 // this._svgDrawing.select('.cursorc').style('visibility', 'hidden')
-
-                $("#miaozhun").css('visibility', 'hidden')
+                this._svgDrawing.select('#miaozhun').style('visibility', 'hidden')
             })
             .on('mousemove', () => {
                 var p = d3.mouse(this._svgDrawing.node())
-                this._svgDrawing.select('.cursorc').attr('cx', p[0]).attr('cy', p[1])
+                // this._svgDrawing.select('.cursorc').attr('cx', p[0]).attr('cy', p[1])
 
-                let outerTransform = this._svgDrawing.attr("transform");
-                let outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
-                let outerX = +outerTranslate[1];
-                let outerY = +outerTranslate[2];
-
-                $("#miaozhun").css({
-                    // 'left': p[0] - 15 + 'px',
-                    // 'top': p[1] - 15 + 'px'
-                    'left': p[0] + outerX - 15 + 'px',
-                    'top': p[1] + outerY - 15 + 'px'
-                })
-
-                // show coordinate
-                // $('#xvalue').html(p[0])
-                // $('#yvalue').html(p[1])
+                this._svgDrawing.select('#miaozhun')
+                    .attr('x', p[0] - 20)
+                    .attr('y', p[1] - 20)
             })
+
         this._svgDrawing.append('g')
             .attr('class', 'chartlayer')
     }
@@ -364,7 +320,7 @@ export default class SumView extends EventEmitter {
         const svgHeight = parseFloat(this.svg.attr('height'));
         const centerX = svgWidth / 2;
         const centerY = svgHeight / 2;
-        // console.log('centerX, centerY', centerX, centerY)
+        console.log('centerX, centerY', centerX, centerY)
 
         // enter
         var chartsenter = charts.enter()
@@ -384,6 +340,19 @@ export default class SumView extends EventEmitter {
                 // this.emit('clickchart', d) 
             })
             .on('dblclick', (d) => {    // up 增加双击事件
+                // 双击该图表 生成推荐图表
+                // if(this.data.chartspecs.length <= d.chid) {
+                //     alert("!请先添加该图表！")
+                //     return
+                // } else {
+                //     this.clientidea = ""
+
+                //     var p = d3.mouse(this._svgDrawing.node())
+                //     this._charts = _.filter(this._charts, (c) => {return !c.created})
+                //     this.render()
+                //     this._recommendCharts(p)
+                // } 
+
                 this.selectedChartID = d.chid
                 // 获取被点击的 chartdot 元素
                 // const chartdot = d3.select(event.currentTarget);
@@ -393,10 +362,9 @@ export default class SumView extends EventEmitter {
 
                 // 获取元素的 transform 属性
                 const transform = chartdot.attr('transform');
-                // console.log('Transform:', transform);
+                console.log('Transform:', transform);
                 // 提取translateX，Y
                 const translate = /translate\(([^,]+),\s*([^)]+)\)/.exec(transform);
-                // console.log(translate);
                 const dotX = +translate[1];
                 const dotY = +translate[2];
 
@@ -404,49 +372,6 @@ export default class SumView extends EventEmitter {
                 // const outerGroup = d3.select("#outerGroup");
                 const outerTransform = this._svgDrawing.attr("transform");
                 const outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
-                const outerX = +outerTranslate[1];
-                const outerY = +outerTranslate[2];
-
-                // 计算需要平移的距离
-                const deltaX = centerX - (outerX + dotX);
-                const deltaY = centerY - (outerY + dotY);
-                // 更新 组合layer 的变换位置
-                this._svgDrawing.attr('transform', `translate(${outerX + deltaX}, ${outerY + deltaY})`)
-            
-                // 生成推荐图表
-                if(this.data.chartspecs.length < this._charts.length) {
-                    alert("!请先添加该图表！")
-                    return
-                } else {
-                    var p = d3.mouse(this._svgDrawing.node())
-                    this._charts = _.filter(this._charts, (c) => {return !c.created})
-                    this.render()
-                    this._recommendCharts(p)
-                } 
-            })
-            .on('dragstart', (d) => { 
-                console.log("???");
-                this.selectedChartID = d.chid
-                // 获取被点击的 chartdot 元素
-                // const chartdot = d3.select(event.currentTarget);
-                const chartdot = this._svgDrawing.selectAll('.chartdot')
-                    .filter((c) => {return c.chid == d.chid})
-                // console.log('元素', chartdot)
-
-                // 获取元素的 transform 属性
-                const transform = chartdot.attr('transform');
-                // console.log('Transform:', transform);
-                // 提取translateX，Y
-                const translate = /translate\(([^,]+),\s*([^)]+)\)/.exec(transform);
-                // console.log(translate);
-                const dotX = +translate[1];
-                const dotY = +translate[2];
-
-                // 获取当前 组合layer 的变换位置
-                // const outerGroup = d3.select("#outerGroup");
-                const outerTransform = this._svgDrawing.attr("transform");
-                const outerTranslate = /translate\(([^,]+),\s*([^)]+)\)/.exec(outerTransform);
-                console.log(outerTranslate);
                 const outerX = +outerTranslate[1];
                 const outerY = +outerTranslate[2];
 
