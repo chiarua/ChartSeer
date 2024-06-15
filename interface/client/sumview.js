@@ -341,17 +341,17 @@ export default class SumView extends EventEmitter {
             })
             .on('dblclick', (d) => {    // up 增加双击事件
                 // 双击该图表 生成推荐图表
-                // if(this.data.chartspecs.length <= d.chid) {
-                //     alert("!请先添加该图表！")
-                //     return
-                // } else {
-                //     this.clientidea = ""
+                if(this.data.chartspecs.length <= d.chid) {
+                    alert("!请先添加该图表！")
+                    return
+                } else {
+                    this.clientidea = ""
 
-                //     var p = d3.mouse(this._svgDrawing.node())
-                //     this._charts = _.filter(this._charts, (c) => {return !c.created})
-                //     this.render()
-                //     this._recommendCharts(p)
-                // } 
+                    var p = d3.mouse(this._svgDrawing.node())
+                    this._charts = _.filter(this._charts, (c) => {return !c.created})
+                    this.render()
+                    this._recommendCharts(p)
+                } 
 
                 this.selectedChartID = d.chid
                 // 获取被点击的 chartdot 元素
@@ -381,6 +381,10 @@ export default class SumView extends EventEmitter {
 
                 // 更新 组合layer 的变换位置
                 this._svgDrawing.attr('transform', `translate(${outerX + deltaX}, ${outerY + deltaY})`)
+
+                const circleX = (outerX + deltaX) < 0 ? svgWidth - (outerX + deltaX) : -(outerX + deltaX)
+                const circleY = (outerY + deltaY) < 0 ? svgHeight - (outerY + deltaY) : -(outerY + deltaY)
+                console.log(circleX, circleY);
             
                 // 最外层g是变大了
                 if(this._svgDrawing.select(".falsecircle"))
@@ -388,9 +392,14 @@ export default class SumView extends EventEmitter {
                 this._svgDrawing.append("circle")
                     .attr("fill", "black")
                     .attr("r", "10")
-                    .attr("cx", (outerX + deltaX) < 0 ? svgWidth - (outerX + deltaX) : - (outerX + deltaX))
-                    .attr("cy", (outerY + deltaY) < 0 ? svgHeight - (outerY + deltaY) : -(outerY + deltaY))
+                    .attr("cx", circleX)
+                    .attr("cy", circleY)
                     .attr("class", "falsecircle")
+
+                
+                this._svgDrawing.select(".background")
+                    .attr("x", circleX > 0 ? circleX - svgWidth : circleX)
+                    .attr("y", circleY > 0 ? circleY - svgHeight : circleY)
             })
             .on('mouseover', (d) => {
                 this.highlight(d.chid, true)

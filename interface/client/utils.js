@@ -888,6 +888,10 @@ export function handleEvents() {
         app.sumview._svgDrawing
             .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
             .attr('style', 'transition: transform 0.5s ease;')
+    
+        this._svgDrawing.select(".background")
+                .attr("x", circleX > 0 ? circleX - svgWidth : circleX)
+                .attr("y", circleY > 0 ? circleY - svgHeight : centerY)
 
         // let len = app.data.len.length
         let len = app.sumview.data.chartspecs.length
