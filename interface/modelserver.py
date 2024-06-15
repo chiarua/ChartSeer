@@ -114,7 +114,7 @@ def upload_file():
     sample = data.get('data', [])[:7]
     df = pd.DataFrame(sample)
     columns = df.columns
-    processor.uploaded(', '.join(columns))
+    processor.uploaded(str(sample))
     return jsonify(processor.get_questions())
     # tmp = ['Which cars have the best fuel efficiency measured in Miles_per_Gallon?',
     #        'How does weight influence the acceleration of the automobiles?']
@@ -131,7 +131,19 @@ def upload_json():
     sample = data.get('data', [])[:7]
     df = pd.DataFrame(sample)
     columns = df.columns
-    processor.uploaded(', '.join(columns))
+    processor.uploaded(str(sample))
+    return jsonify(processor.get_questions())
+
+
+@app.route('/uploadcsv', methods=['POST'])
+def upload_csv():
+    """
+    :return: json{"questions": list, "explanations": list}
+    """
+    file = request.files['file']
+    df = pd.read_csv(file)
+    sample = df[:7].to_dict(orient='records')
+    processor.uploaded(str(sample))
     return jsonify(processor.get_questions())
 
 
