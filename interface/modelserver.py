@@ -110,8 +110,17 @@ def upload_file():
     :return: json{"questions": list, "explanations": list}
     """
     file = request.files['file']
-    data = json.load(file)
-    sample = data.get('data', [])[:7]
+    if file.filename.endswith('.csv'):
+        # 处理CSV文件
+        df = pd.read_csv(file)
+        data = csv_to_json(df)
+    elif file.filename.endswith('.json'):
+        # 处理JSON文件
+        data = json.load(file)
+    else:
+        return "Unsupported file format", 400
+    sample = data.get('attributes', [])
+    print(sample)
     df = pd.DataFrame(sample)
     columns = df.columns
     processor.uploaded(str(sample))
@@ -128,23 +137,30 @@ def upload_json():
     :return: json{"questions": list, "explanations": list}
     """
     data = request.get_json()
-    sample = data.get('data', [])[:7]
+    sample = data.get('attributes', [])
     df = pd.DataFrame(sample)
     columns = df.columns
     processor.uploaded(str(sample))
     return jsonify(processor.get_questions())
 
 
-@app.route('/uploadcsv', methods=['POST'])
-def upload_csv():
-    """
-    :return: json{"questions": list, "explanations": list}
-    """
+def csv_to_json(df):
+    sample = df.to_dict(orient='records')
+    attributes = []
+    for column in df.columns:
+        dtype = df[column].dtype
+        if dtype == 'object':
+            attributes.append([column, "str", ""])
+        else:
+            attributes.append([column, "num", ""])
+    return jsonify({"charts": [], "attributes": attributes, "data": sample})
+
+
+@app.route('/csvtojson', methods=['POST'])
+def csvtojson():
     file = request.files['file']
     df = pd.read_csv(file)
-    sample = df[:7].to_dict(orient='records')
-    processor.uploaded(str(sample))
-    return jsonify(processor.get_questions())
+    return csv_to_json(df)
 
 
 @app.route('/updatequiz', methods=['POST'])
