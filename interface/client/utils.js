@@ -689,19 +689,36 @@ export function handleEvents() {
 
         const formData = new FormData();
         formData.append('file', file)
+        
+        if(file.name.split(".")[1] == "csv") {
+            // to do svc文件读取
+            // $.ajax({
+            //     dataType: "json",
+            //     data: formData,
+            //     url: "http://localhost:5000/uploadcsv",
+            //     type: "post",
+            //     processData: false,
+            //     contentType: false,
+            //     success:function (reponse) {
+            //         console.log(response);
+            //     },
+            //     error:function () {
+            //         console.log('error');
+            //     },
+            // });
 
-        // to do svc文件读取
+        } else {
+            var reader = new FileReader();
+            reader.readAsText(this.files[0]);
+            reader.onload = function(e) {
+                var data = JSON.parse(e.target.result)
+                initData = data
 
-        var reader = new FileReader();
-        reader.readAsText(this.files[0]);
-        reader.onload = function(e) {
-            var data = JSON.parse(e.target.result)
-            initData = data
+                dataset = data.data
 
-            dataset = data.data
-
-            updateData(data, 'file', true)
-        };
+                updateData(data, 'file', true)
+            };
+        }
 
         $.ajax({
             dataType: "json",
@@ -888,11 +905,14 @@ export function handleEvents() {
         app.sumview._svgDrawing
             .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
             .attr('style', 'transition: transform 0.5s ease;')
-    
-        this._svgDrawing.select(".background")
+
+        if(app.sumview._svgDrawing.select(".background").attr("x")) {
+            app.sumview._svgDrawing.select(".background")
                 .attr("x", circleX > 0 ? circleX - svgWidth : circleX)
                 .attr("y", circleY > 0 ? circleY - svgHeight : centerY)
-
+            return
+        }
+        
         // let len = app.data.len.length
         let len = app.sumview.data.chartspecs.length
         if(app.sumview.charts.length == len && len == initchartslength) {
