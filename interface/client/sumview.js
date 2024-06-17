@@ -341,17 +341,17 @@ export default class SumView extends EventEmitter {
             })
             .on('dblclick', (d) => {    // up 增加双击事件
                 // 双击该图表 生成推荐图表
-                // if(this.data.chartspecs.length <= d.chid) {
-                //     alert("!请先添加该图表！")
-                //     return
-                // } else {
-                //     this.clientidea = ""
+                if(this.data.chartspecs.length <= d.chid) {
+                    alert("请先添加该图表！")
+                    return
+                } else {
+                    this.clientidea = ""
 
-                //     var p = d3.mouse(this._svgDrawing.node())
-                //     this._charts = _.filter(this._charts, (c) => {return !c.created})
-                //     this.render()
-                //     this._recommendCharts(p)
-                // } 
+                    var p = d3.mouse(this._svgDrawing.node())
+                    this._charts = _.filter(this._charts, (c) => {return !c.created})
+                    this.render()
+                    this._recommendCharts(p)
+                } 
 
                 this.selectedChartID = d.chid
                 // 获取被点击的 chartdot 元素

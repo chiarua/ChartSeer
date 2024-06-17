@@ -692,21 +692,41 @@ export function handleEvents() {
         
         if(file.name.split(".")[1] == "csv") {
             // to do svc文件读取
-            // $.ajax({
-            //     dataType: "json",
-            //     data: formData,
-            //     url: "http://localhost:5000/uploadcsv",
-            //     type: "post",
-            //     processData: false,
-            //     contentType: false,
-            //     success:function (reponse) {
-            //         console.log(response);
-            //     },
-            //     error:function () {
-            //         console.log('error');
-            //     },
-            // });
+            $.ajax({
+                dataType: "json",
+                data: formData,
+                url: "http://localhost:5000/csvtojson",
+                type: "post",
+                processData: false,
+                contentType: false,
+                success:function (response) {
+                    console.log(response);
+                    initData = response
+                    dataset = response.data
 
+                    updateData(response, 'file', true)
+
+                    $.ajax({
+                        dataType: "json",
+                        data: formData,
+                        url: "http://localhost:5000/upload",
+                        type: "post",
+                        processData: false,
+                        contentType: false,
+                        success:function (reponse) {
+                            var data = reponse
+                            exporationgoals(data)
+                        },
+                        error:function () {
+                            console.log('error');
+                        },
+                    });
+                },
+                error:function (e) {
+                    console.log('error', e);
+                    console.log(JSON.parse(e.responseText));
+                },
+            });
         } else {
             var reader = new FileReader();
             reader.readAsText(this.files[0]);
@@ -718,23 +738,23 @@ export function handleEvents() {
 
                 updateData(data, 'file', true)
             };
-        }
 
-        $.ajax({
-            dataType: "json",
-            data: formData,
-            url: "http://localhost:5000/upload",
-            type: "post",
-            processData: false,
-			contentType: false,
-            success:function (reponse) {
-                var data = reponse
-                exporationgoals(data)
-            },
-            error:function () {
-                console.log('error');
-            },
-        });
+            $.ajax({
+                dataType: "json",
+                data: formData,
+                url: "http://localhost:5000/upload",
+                type: "post",
+                processData: false,
+                contentType: false,
+                success:function (reponse) {
+                    var data = reponse
+                    exporationgoals(data)
+                },
+                error:function () {
+                    console.log('error');
+                },
+            });
+        }
     })
 
     $('#refine').unbind("click").bind("click", (e) => {
@@ -809,10 +829,10 @@ export function handleEvents() {
             return
         }
 
-        for(let i = initchartslength - 1; i < app.data.chartspecs.lengthl; i++) {
-            app.data.explanations.pop()
-            app.data.questions.pop()
-        }
+        // for(let i = initchartslength - 1; i < app.data.chartspecs.lengthl; i++) {
+        //     app.data.explanations.pop()
+        //     app.data.questions.pop()
+        // }
             
         app.data.chartspecs.splice(initchartslength, app.data.chartspecs.length - initchartslength)
 
@@ -902,36 +922,32 @@ export function handleEvents() {
     })
 
     $("#rollback").unbind("click").bind("click", (e) => {
-        app.sumview._svgDrawing
+        if(app.sumview._svgDrawing.select(".background").attr("x") != 0) {
+            app.sumview._svgDrawing.select(".background")
+                .attr("x", 0)
+                .attr("y", 0)
+
+            if(app.sumview._svgDrawing.select(".falsecircle"))
+                app.sumview._svgDrawing.select(".falsecircle").remove()
+
+            app.sumview._svgDrawing
             .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
             .attr('style', 'transition: transform 0.5s ease;')
-
-        if(app.sumview._svgDrawing.select(".background").attr("x")) {
-            app.sumview._svgDrawing.select(".background")
-                .attr("x", circleX > 0 ? circleX - svgWidth : circleX)
-                .attr("y", circleY > 0 ? circleY - svgHeight : centerY)
-            return
-        }
-        
-        // let len = app.data.len.length
-        let len = app.sumview.data.chartspecs.length
-        if(app.sumview.charts.length == len && len == initchartslength) {
-            alert("无需ROLLBACK！")
-            return
-        }
-        if(app.sumview.charts.length > len) {
-            // app.sumview.data.chartspecs.splice(len, app.sumview.charts.length - len)
-            app.data.explanations.splice(len, app.sumview.charts.length - len)
-            app.data.questions.splice(len, app.sumview.charts.length - len)
-            app.sumview.update()
-        }
-        // if(app.data.len[len - 1] > app.data.len[len - 2]) {
-        // console.log(initchartslength);
-        if(len > initchartslength) {
-            app.data.chartspecs.pop()
-            app.data.explanations.pop()
-            app.data.questions.pop()
-            app.sumview.update()
+        } else {
+            if(app.sumview.charts.length == app.sumview.data.chartspecs.length && app.sumview.data.chartspecs.length == initchartslength) {
+                alert("无需ROLLBACK！")
+            } else if(app.sumview._charts.length > app.sumview.data.chartspecs.length) {
+                // app.sumview.data.chartspecs.splice(len, app.sumview.charts.length - len)
+                // app.data.explanations.splice(len, app.sumview.charts.length - len)
+                // app.data.questions.splice(len, app.sumview.charts.length - len)
+    
+                app.sumview.update()
+            } else {
+                app.data.chartspecs.pop()
+                // app.data.explanations.pop()
+                // app.data.questions.pop()
+                app.sumview.update()
+            }
         }
     })
 }
