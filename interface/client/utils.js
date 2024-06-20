@@ -931,9 +931,11 @@ export function handleEvents() {
                 app.sumview._svgDrawing.select(".falsecircle").remove()
 
             app.sumview._svgDrawing
-            .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
-            .attr('style', 'transition: transform 0.5s ease;')
+                .attr('transform', 'translate(' + 0 + ',' + 0 + ')')
+                .attr('style', 'transition: transform 0.5s ease;')
         } else {
+            app.sumview._svgDrawing.select('#dingwei').style('visibility', 'hidden')
+
             if(app.sumview.charts.length == app.sumview.data.chartspecs.length && app.sumview.data.chartspecs.length == initchartslength) {
                 alert("无需ROLLBACK！")
             } else if(app.sumview._charts.length > app.sumview.data.chartspecs.length) {
@@ -949,6 +951,19 @@ export function handleEvents() {
                 app.sumview.update()
             }
         }
+    })
+
+    $("#gencharts").unbind("click").bind("click", (e) => {
+        let p = []
+        p[0] = Number($('#xvalue').html())
+        p[1] = Number($('#yvalue').html())
+
+        app.sumview._charts = _.filter(app.sumview._charts, (c) => {return !c.created})
+        app.sumview.render()
+        app.sumview._recommendCharts(p)
+
+        $('#xvalue').html("")
+        $('#yvalue').html("")
     })
 }
 
