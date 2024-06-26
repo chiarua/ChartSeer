@@ -176,31 +176,31 @@ export default class SumView extends EventEmitter {
             })
             .on('click', () => {
                 var p = d3.mouse(this._svgDrawing.node())
-
+                
                 // 取消上次延时未执行的方法
                 clearTimeout(clickTimeId);
                 //执行延时
                 clickTimeId = setTimeout( () => {
                     //此处为单击事件要执行的代码
-                    this.clientidea = $('#geninput input').val()
-                    $('#geninput input').val("")
+                    // this.clientidea = $('#geninput input').val()
+                    // $('#geninput input').val("")
 
-                    if(this.clientidea == "") {
-                        alert("请先输入意图！")
-                    }else {
+                    // if(this.clientidea == "") {
+                    //     alert("请先输入意图！")
+                    // }else {
                         this._svgDrawing.select('#dingwei')
                             .style('visibility', 'visible')
                             .attr('x', p[0] - 30)
-                            .attr('y', p[1] - 30)
+                            .attr('y', p[1] - 50)
 
                         // show coordinate
                         $('#xvalue').html(p[0].toFixed(2))
                         $('#yvalue').html(p[1].toFixed(2))
 
-                        this._charts = _.filter(this._charts, (c) => {return !c.created})
-                        this.render()
-                        this._recommendCharts(p)
-                    }
+                        // this._charts = _.filter(this._charts, (c) => {return !c.created})
+                        // this.render()
+                        // this._recommendCharts(p)
+                    // }
                 }, 200)
             })
             .on('mouseover', () => {
@@ -341,17 +341,17 @@ export default class SumView extends EventEmitter {
             })
             .on('dblclick', (d) => {    // up 增加双击事件
                 // 双击该图表 生成推荐图表
-                // if(this.data.chartspecs.length <= d.chid) {
-                //     alert("!请先添加该图表！")
-                //     return
-                // } else {
-                //     this.clientidea = ""
+                if(this.data.chartspecs.length <= d.chid) {
+                    alert("请先添加该图表！")
+                    return
+                } else {
+                    this.clientidea = ""
 
-                //     var p = d3.mouse(this._svgDrawing.node())
-                //     this._charts = _.filter(this._charts, (c) => {return !c.created})
-                //     this.render()
-                //     this._recommendCharts(p)
-                // } 
+                    var p = d3.mouse(this._svgDrawing.node())
+                    this._charts = _.filter(this._charts, (c) => {return !c.created})
+                    this.render()
+                    this._recommendCharts(p)
+                } 
 
                 this.selectedChartID = d.chid
                 // 获取被点击的 chartdot 元素
@@ -903,6 +903,9 @@ export default class SumView extends EventEmitter {
                 contentType: 'application/json'
             })
         }).then((data) => {
+            this.clientidea = $('#geninput input').val()
+            $('#geninput input').val("")
+
             var reqdata = {}
             reqdata.data = data
             reqdata.clientidea = this.clientidea
