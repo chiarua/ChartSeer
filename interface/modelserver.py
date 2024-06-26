@@ -84,10 +84,10 @@ def upload_file():
     else:
         return "Unsupported file format", 400
     sample = data.get('attributes', [])
-    # print(sample)
-    df = pd.DataFrame(sample)
-    columns = df.columns
+    sample_data = data.get('data', [])[:5]
+    print(sample)
     processor.uploaded(str(sample))
+    processor.get_sample(sample_data)
     return jsonify(processor.get_questions())
     # tmp = ['Which cars have the best fuel efficiency measured in Miles_per_Gallon?',
     #        'How does weight influence the acceleration of the automobiles?']
@@ -102,9 +102,9 @@ def upload_json():
     """
     data = request.get_json()
     sample = data.get('attributes', [])
-    df = pd.DataFrame(sample)
-    columns = df.columns
+    sample_data = data.get('data', [])[:5]
     processor.uploaded(str(sample))
+    processor.get_sample(sample_data)
     return jsonify(processor.get_questions())
 
 

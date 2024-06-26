@@ -17,6 +17,7 @@ class FileUploadProcessor:
         self.modify_persona = None
         self.question_expls = dict()
         self.ini = Initialize()
+        self.sample = None
 
     def uploaded(self, dataset: str):
         self.ini.initialize(dataset)
@@ -36,6 +37,9 @@ class FileUploadProcessor:
 
     def get_preview(self) -> str:
         return self.dataset_preview
+
+    def get_sample(self, sample_data):
+        self.sample = sample_data
 
     def update_questions(self, q: List[str]):
         self.questions = q
@@ -84,8 +88,7 @@ class FileUploadProcessor:
         :return: dict {“explanations”:[], “codes”:[]}
         """
         instr = "Here is the chart:" + design_attr + "Here is the description of the dataset:" + self.dataset_preview + " and here is the description of the data attributes: " + str(
-            self.field_preview)
-
+            self.field_preview) + " Here is the sample data:" + str(self.sample)
         generator = TextGen.TextGenerator()
         gpt_output: dict = generator.generate(self.chart_desc_persona, instr)
         return gpt_output
@@ -112,7 +115,6 @@ class FileUploadProcessor:
         if self.question_expls.get(quiz) is None:
             instr = "Here is the question:" + quiz + " here is the description of the data attributes(fields): " + str(
                 self.field_preview)
-
             generator = TextGen.TextGenerator()
             gpt_output: dict = generator.generate(self.quiz_desc_persona, instr)
             self.question_expls[quiz] = gpt_output.get('description')
