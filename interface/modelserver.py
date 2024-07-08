@@ -130,7 +130,7 @@ def csvtojson():
 @app.route('/updatequiz', methods=['POST'])
 def update_question():
     """
-    :return: json{"chart": list, "charts_for_encode": list}
+    :return: json{"charts": list, "charts_for_encode": list}
     """
     q = request.get_json()
     str_list = []

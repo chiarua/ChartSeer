@@ -76,22 +76,17 @@ def check_root(spec):
 
 def fix_charts(charts):
     fixed_charts = []
-    random_charts = []
     the_spec = parse_specs()
     for chart in charts:
-        chart['vega-lite_code'] = fix_vegalite_spec_recur(chart['vega-lite_code'], the_spec)
+        tmp = chart['vega-lite_code']
+        tmp = fix_vegalite_spec_recur(tmp, the_spec)
+        if not check_root(tmp):
+            chart['is_special'] = True
+        else:
+            chart["vega-lite_code"] = tmp
+            chart["is_special"] = False
         fixed_charts.append(chart)
-    del_lst = []
-    for i, chart in enumerate(fixed_charts):
-        if check_root(chart['vega-lite_code']):
-            continue
-        del_lst.append(i)
-    print(del_lst)
-    del_lst.reverse()
-    for i in del_lst:
-        random_charts.append(charts.pop(i))
-        fixed_charts.pop(i)
-    dic = {"charts": charts, "charts_for_encode": fixed_charts, "random_charts": random_charts}
+    dic = {"charts": charts, "charts_for_encode": fixed_charts}
     return dic
 
 
