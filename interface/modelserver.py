@@ -199,6 +199,17 @@ def encode():
     return jsonify(z.tolist())
 
 
+@app.route('/spencode', methods=['POST'])
+def special_encode():
+    """
+    requires: {"special_charts":[]}
+    :return: list(parameter)
+    """
+    specs = request.get_json()
+    chart_lst = specs["special_charts"]
+    return jsonify(utils.encode(chart_lst))
+
+
 @app.route('/decode', methods=['POST'])
 def decode():
     z = np.array(request.get_json())
