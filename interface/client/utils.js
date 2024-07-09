@@ -811,6 +811,8 @@ export function handleEvents() {
 
             // app.data.len.push(app.sumview.data.charts)
 
+            app.data.isspecial.push(true)
+
             app.chartview.emit('add-chart', refine_chart.originalspec)
         }
     })
@@ -833,8 +835,9 @@ export function handleEvents() {
         //     app.data.explanations.pop()
         //     app.data.questions.pop()
         // }
-            
-        app.data.chartspecs.splice(initchartslength, app.data.chartspecs.length - initchartslength)
+        let chart_len = app.data.chartspecs.length
+        app.data.chartspecs.splice(initchartslength, chart_len - initchartslength)
+        app.data.isspecial.splice(initchartslength, chart_len - initchartslength)
 
         app.sumview.update()
     })
@@ -935,6 +938,8 @@ export function handleEvents() {
                 .attr('style', 'transition: transform 0.5s ease;')
         } else {
             app.sumview._svgDrawing.select('#dingwei').style('visibility', 'hidden')
+            $('#xvalue').html("")
+            $('#yvalue').html("")
 
             if(app.sumview.charts.length == app.sumview.data.chartspecs.length && app.sumview.data.chartspecs.length == initchartslength) {
                 alert("无需ROLLBACK！")
@@ -948,6 +953,8 @@ export function handleEvents() {
                 app.data.chartspecs.pop()
                 // app.data.explanations.pop()
                 // app.data.questions.pop()
+
+                app.data.isspecial.pop()
                 app.sumview.update()
             }
         }
@@ -961,9 +968,6 @@ export function handleEvents() {
         app.sumview._charts = _.filter(app.sumview._charts, (c) => {return !c.created})
         app.sumview.render()
         app.sumview._recommendCharts(p)
-
-        $('#xvalue').html("")
-        $('#yvalue').html("")
     })
 }
 
@@ -1111,6 +1115,7 @@ export function exporationgoals(data) {
                 var charts = []
                 var questions = []
                 var explanations = [] 
+                var isspecial = []
                 for(var i = 0; i < res_charts.length; i++) {
                     res_charts[i]["vega-lite_code"]._meta = {
                         uid: 0,
@@ -1122,9 +1127,13 @@ export function exporationgoals(data) {
                     questions.push(res_charts[i]["question"])
                     explanations.push(res_charts[i]["explanation"])
                 }
+                for(var i = 0; i < res_charts.length; i++) {
+                    isspecial.push(res_charts[i].is_special)
+                }
                 initData.charts = charts
                 initData.questions = questions
                 initData.explanations = explanations
+                initData.isspecial = isspecial
 
                 // console.log('initData', initData);
     
@@ -1298,6 +1307,7 @@ export function updateData(data, name, ifone) {
     app.data = {}
     app.data.chartdata = {attributes: data.attributes, values: data.data}
     app.data.chartspecs = data.charts
+    app.data.isspecial = data.isspecial
     
     initchartslength = data.charts.length
 

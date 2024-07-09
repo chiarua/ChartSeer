@@ -327,6 +327,8 @@ export default class SumView extends EventEmitter {
             .append('g')
             .attr('class', 'chartdot')
             .attr('transform', (d) => {
+                // console.log(this._xscale(d.coords[0]));
+                // console.log(this._yscale(d.coords[1]));
                 return 'translate(' + this._xscale(d.coords[0]) + ',' + this._yscale(d.coords[1]) + ')'
             })
             .on('click', (d) => {
@@ -614,43 +616,123 @@ export default class SumView extends EventEmitter {
 
     _computeProjection(hasembedding, callback) {
         if(!hasembedding) {
-            var chartspecs = this._charts.map((d) => {return d.normspec})
+            // if(app.data.isspecial.indexOf(true) != -1) {
+                let record_data = []
 
-            $.ajax({
-                type: 'POST',
-                crossDomain: true,
-                url: this.conf.backend + '/encode',
-                data: JSON.stringify(chartspecs),
-                contentType: 'application/json'
-            }).then((data) => {
-                this._charts.forEach((d, i) => { d.embedding = data[i]})
-                var distances = this._computeDistanceMatrix(this._charts)
-                return $.ajax({
-                    type: 'POST',
-                    crossDomain: true,
-                    url: this.conf.backend + '/mds',
-                    data: JSON.stringify(distances),
-                    contentType: 'application/json'
-                })
-            }).then((data) => {
-                if(this._prevcharts.length <= 3)
-                    return data
+                let record_true = []
+                let record_false = [] 
+                
+                let false_charts = []
+                let true_charts = []
+                for(let i = 0; i < app.data.isspecial.length; i++) {
+                    if(app.data.isspecial[i] == true)
+                        true_charts.push(this._charts[i])
+                    else 
+                        false_charts.push(this._charts[i])
+                }
 
-                var precoords = this._alignCoordinates()
-                return $.ajax({
+                var ran_charts = {}
+                ran_charts.special_charts = true_charts
+                $.ajax({
                     type: 'POST',
-                    crossDomain: true,
-                    url: this.conf.backend + '/orientate',
-                    data: JSON.stringify([precoords, data]),
+                    url: this.conf.backend + '/spencode',
+                    data: JSON.stringify(ran_charts),
                     contentType: 'application/json'
+                }).then((data) => {
+                    record_true = data
+
+                    var chartspecs = false_charts.map((d) => {return d.normspec})
+
+                    return $.ajax({
+                        type: 'POST',
+                        crossDomain: true,
+                        url: this.conf.backend + '/encode',
+                        data: JSON.stringify(chartspecs),
+                        contentType: 'application/json'
+                    })
+                }).then((data) => {
+                    record_false = data
+
+                    let k = 0
+                    let t = 0
+                    for(let i = 0; i < app.data.isspecial.length; i++) {
+                        if(app.data.isspecial[i] == true)
+                            record_data.push(record_true[k++])
+                        else 
+                        record_data.push(record_false[t++])
+                    }
+
+                    this._charts.forEach((d, i) => { d.embedding = record_data[i]})
+                    var distances = this._computeDistanceMatrix(this._charts)
+            
+                    return $.ajax({
+                        type: 'POST',
+                        crossDomain: true,
+                        url: this.conf.backend + '/mds',
+                        data: JSON.stringify(distances),
+                        contentType: 'application/json'
+                    })
+                }).then((data) => {
+                    if(this._prevcharts.length <= 3)
+                        return data
+
+                    var precoords = this._alignCoordinates()
+                    return $.ajax({
+                        type: 'POST',
+                        crossDomain: true,
+                        url: this.conf.backend + '/orientate',
+                        data: JSON.stringify([precoords, data]),
+                        contentType: 'application/json'
+                    })
+                }).done((data) => {
+                    this._adjustScale(data)
+                    this._charts.forEach((d, i) => {
+                        d.coords = data[i] //为坐标赋值
+                    })
+                    callback()
+
+                    // 清空
+                    // app.data.isspecial = []
                 })
-            }).done((data) => {
-                this._adjustScale(data)
-                this._charts.forEach((d, i) => {
-                    d.coords = data[i] //为坐标赋值
-                })
-                callback()
-            })
+            // } else {
+            //     var chartspecs = this._charts.map((d) => {return d.normspec})
+
+            //     $.ajax({
+            //         type: 'POST',
+            //         crossDomain: true,
+            //         url: this.conf.backend + '/encode',
+            //         data: JSON.stringify(chartspecs),
+            //         contentType: 'application/json'
+            //     }).then((data) => {
+            //         this._charts.forEach((d, i) => { d.embedding = data[i]})
+            //         var distances = this._computeDistanceMatrix(this._charts)
+            //         return $.ajax({
+            //             type: 'POST',
+            //             crossDomain: true,
+            //             url: this.conf.backend + '/mds',
+            //             data: JSON.stringify(distances),
+            //             contentType: 'application/json'
+            //         })
+            //     }).then((data) => {
+            //         if(this._prevcharts.length <= 3)
+            //             return data
+
+            //         var precoords = this._alignCoordinates()
+            //         return $.ajax({
+            //             type: 'POST',
+            //             crossDomain: true,
+            //             url: this.conf.backend + '/orientate',
+            //             data: JSON.stringify([precoords, data]),
+            //             contentType: 'application/json'
+            //         })
+            //     }).done((data) => {
+            //         this._adjustScale(data)
+            //         this._charts.forEach((d, i) => {
+            //             d.coords = data[i] //为坐标赋值
+            //         })
+            //         callback()
+            //     })
+            // }
         }
         else {
             var distances = this._computeDistanceMatrix(this._charts)
@@ -678,11 +760,9 @@ export default class SumView extends EventEmitter {
                 this._charts.forEach((d, i) => {
                     d.coords = data[i]
                 })
-                console.log(this._charts)
                 if(callback) callback()
             })
         }
-        
     }
 
     _computeDistanceMatrix(charts) {//计算所有图表的距离
@@ -821,6 +901,7 @@ export default class SumView extends EventEmitter {
             this._formSpec(node[f], attributesMap, numattrs, strattrs, vars)
         }
     }
+
     _setVars(node, vars) {
         if(typeof node != 'object') return
         if(node['field']) {
@@ -831,6 +912,7 @@ export default class SumView extends EventEmitter {
             this._setVars(node[f], vars)
         }
     }
+    
     _kNN(p, k) {
         //var charts = _.filter(this._charts, ['created', false])
         var charts = _.sortBy(this._charts, (d) => {
@@ -919,7 +1001,7 @@ export default class SumView extends EventEmitter {
                 data: JSON.stringify(reqdata),
                 contentType: 'application/json',
                 success: function(response) {
-                    console.log("处理结果:", response);
+                    // console.log("处理结果:", response);
                 },
                 error: function(error) {
                     console.error("请求失败:", error);
